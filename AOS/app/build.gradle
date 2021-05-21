@@ -1,15 +1,25 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    signingConfigs {
+        commonkey {
+            storeFile file('../commonkey.keystore')
+            storePassword 'aend0512!'
+            keyAlias = 'commonkey'
+            keyPassword 'aend0512!'
+        }
+    }
+
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "com.sinkleader.install"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
@@ -17,16 +27,30 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.commonkey
+            minifyEnabled false
+            debuggable = true
+            multiDexEnabled = true
+        }
+
         release {
+            signingConfig signingConfigs.commonkey
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            multiDexEnabled = true
         }
     }
 
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "androidx.multidex:multidex:2.0.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.core:core-ktx:1.3.2'
@@ -34,4 +58,16 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    // FCM
+    implementation platform('com.google.firebase:firebase-bom:26.3.0')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.google.firebase:firebase-messaging:20.1.0'
+
+    implementation 'com.loopj.android:android-async-http:1.4.11'
+
+    implementation 'com.github.nguyenhoanglam:ImagePicker:1.4.3'
+    implementation 'com.droidninja:filepicker:2.2.4'
 }

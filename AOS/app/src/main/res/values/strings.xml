@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SinkLeader</string>
+
+
+    <string name="phone_number">1688-7992</string>
+
+    <string name="mms_red_text">※ 문자 메시지가 수신되지 않으면\n스팸메시지를 확인바랍니다.</string>
+
 </resources>
