@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/onlyWhite"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_alignParentBottom="true"
+        android:id="@+id/pop_layout_scan"
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+        <TextView
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1차기 제품 S/N 스캔"
+            android:textColor="@color/gray19"
+            android:fontFamily="@font/notosans_regular"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:layout_centerHorizontal="true"
+            />
+        <LinearLayout
+            android:layout_alignParentBottom="true"
+            android:layout_margin="20dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/back_btn_scan"
+                android:text="이전"
+                android:textSize="17dp"
+                android:textColor="@color/onlyWhite"
+                android:textStyle="bold"
+                android:fontFamily="@font/notosans_regular"
+                android:background="@color/graybtn"
+                android:layout_width="120dp"
+                android:layout_height="60dp"/>
+            <Button
+                android:id="@+id/open_btn_scan"
+                android:text="직접입력"
+                android:textSize="17dp"
+                android:textColor="@color/onlyWhite"
+                android:textStyle="bold"
+                android:fontFamily="@font/notosans_regular"
+                android:layout_marginLeft="10dp"
+                android:background="@color/buttonblue"
+                android:layout_weight="0.8"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+        android:layout_above="@+id/pop_layout_scan"
+        android:id="@+id/view_scan"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</RelativeLayout>

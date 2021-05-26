@@ -9,7 +9,7 @@ class PrefMgr {
     var prefs: SharedPreferences? = null
 
     init {
-        prefs = MyApplication.globalApplicationContext?.getSharedPreferences("SinkleaderInstall_Preference", Context.MODE_PRIVATE)
+        prefs = MyApplication.globalApplicationContext?.getSharedPreferences("SLInstall_Preference", Context.MODE_PRIVATE)
     }
 
     fun put(key: String?, value: Any) {

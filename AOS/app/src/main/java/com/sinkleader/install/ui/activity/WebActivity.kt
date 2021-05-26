@@ -27,8 +27,9 @@ import com.sinkleader.install.util.Util
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
+import java.net.URLEncoder
 import java.util.*
-import kotlin.jvm.Throws
+
 
 class WebActivity : BaseActivity() {
     val MOVE_LOCATION = 225
@@ -37,8 +38,6 @@ class WebActivity : BaseActivity() {
     var TOKEN: String? = null
     var activity: BaseActivity? = null
     var isBack = false
-    var isLoad = true
-
     var isLayer = false
 
 
@@ -91,7 +90,9 @@ class WebActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == WEB_LOGIN && resultCode == RESULT_OK) {
-            val url: String = Constant.FrontUrls.get(Util.FrontIndex).toString() + data!!.getStringExtra("url")
+            val url: String = Constant.FrontUrls.get(Util.FrontIndex).toString() + data!!.getStringExtra(
+                "url"
+            )
             loadURL(url)
         } else if (requestCode == 324 && resultCode == RESULT_OK) {
             val callback = data!!.getStringExtra("callback")
@@ -137,7 +138,12 @@ class WebActivity : BaseActivity() {
 
                 Log.d("data", data?.data.toString())
 
-                uploadMessage?.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data))
+                uploadMessage?.onReceiveValue(
+                    WebChromeClient.FileChooserParams.parseResult(
+                        resultCode,
+                        data
+                    )
+                )
             } else {
                 uploadMessage?.onReceiveValue(arrayOf(data?.data))
             }
@@ -151,7 +157,11 @@ class WebActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults == null) {
             Toast.makeText(this, "$requestCode 권한 결과 값을 받아오지 못하였습니다.", Toast.LENGTH_LONG).show()
@@ -160,12 +170,21 @@ class WebActivity : BaseActivity() {
         if (requestCode == Constant.RC_PERMISSION_LOCATION) {
             if (grantResults.size == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 activity?.runOnUiThread {
-                    val dialog = ConfirmDialog(activity, "위치 사용 권한이 없습니다.\n애플리케이션 설정에서 권한을 허가해주세요.", "알림", "확인", {
-                        var intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + application.packageName))
-                        intent.addCategory(Intent.CATEGORY_DEFAULT)
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        activity?.startActivity(intent)
-                    })
+                    val dialog = ConfirmDialog(
+                        activity,
+                        "위치 사용 권한이 없습니다.\n애플리케이션 설정에서 권한을 허가해주세요.",
+                        "알림",
+                        "확인",
+                        {
+                            var intent = Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse(
+                                    "package:" + application.packageName
+                                )
+                            )
+                            intent.addCategory(Intent.CATEGORY_DEFAULT)
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            activity?.startActivity(intent)
+                        })
                     dialog.show()
                 }
 
@@ -217,7 +236,11 @@ class WebActivity : BaseActivity() {
             }
 
 
-            override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
+            override fun onReceivedError(
+                view: WebView,
+                request: WebResourceRequest,
+                error: WebResourceError
+            ) {
                 var code = 0
                 var getUrl = ""
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -229,7 +252,11 @@ class WebActivity : BaseActivity() {
                 super.onReceivedError(view, request, error)
             }
 
-            override fun onReceivedHttpError(view: WebView, request: WebResourceRequest, errorResponse: WebResourceResponse) {
+            override fun onReceivedHttpError(
+                view: WebView,
+                request: WebResourceRequest,
+                errorResponse: WebResourceResponse
+            ) {
                 var code = 0
                 var getUrl = ""
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -242,14 +269,29 @@ class WebActivity : BaseActivity() {
                 super.onReceivedHttpError(view, request, errorResponse)
             }
 
-            override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {}
-            override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
+            override fun onReceivedSslError(
+                view: WebView,
+                handler: SslErrorHandler,
+                error: SslError
+            ) {
+            }
+
+            override fun onReceivedError(
+                view: WebView,
+                errorCode: Int,
+                description: String,
+                failingUrl: String
+            ) {
                 super.onReceivedError(view, errorCode, description, failingUrl)
             }
         })
         webView?.setWebChromeClient(object : WebChromeClient() {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-            override fun onShowFileChooser(webView: WebView?, filePathCallback: ValueCallback<Array<Uri?>>, fileChooserParams: FileChooserParams?): Boolean {
+            override fun onShowFileChooser(
+                webView: WebView?,
+                filePathCallback: ValueCallback<Array<Uri?>>,
+                fileChooserParams: FileChooserParams?
+            ): Boolean {
 //                uploadMessage = filePathCallback
                 // gallery
 //                FilePickerBuilder.instance
@@ -268,32 +310,54 @@ class WebActivity : BaseActivity() {
                 return true
             }
 
-            override fun onJsAlert(view: WebView, url: String,
-                                   message: String, result: JsResult): Boolean {
-                val dialog = ConfirmDialog(this@WebActivity, message, "", "확인", object : ConfirmDialog.ConfirmDialogListener {
-                    override fun onConfirm1() {
-                        result.confirm()
-                    }
-                })
+            override fun onJsAlert(
+                view: WebView, url: String,
+                message: String, result: JsResult
+            ): Boolean {
+                val dialog = ConfirmDialog(
+                    this@WebActivity,
+                    message,
+                    "",
+                    "확인",
+                    object : ConfirmDialog.ConfirmDialogListener {
+                        override fun onConfirm1() {
+                            result.confirm()
+                        }
+                    })
                 dialog.show()
                 return true
             }
 
-            override fun onJsConfirm(view: WebView, url: String, message: String, result: JsResult): Boolean {
-                val dialog = ConfirmDialogTwo(this@WebActivity, message, "확인", "취소", object : ConfirmDialogTwo.ConfirmDialogListener {
-                    override fun onConfirm1() {
-                        result.confirm()
-                    }
+            override fun onJsConfirm(
+                view: WebView,
+                url: String,
+                message: String,
+                result: JsResult
+            ): Boolean {
+                val dialog = ConfirmDialogTwo(
+                    this@WebActivity,
+                    message,
+                    "확인",
+                    "취소",
+                    object : ConfirmDialogTwo.ConfirmDialogListener {
+                        override fun onConfirm1() {
+                            result.confirm()
+                        }
 
-                    override fun onConfirm2() {
-                        result.cancel()
-                    }
-                })
+                        override fun onConfirm2() {
+                            result.cancel()
+                        }
+                    })
                 dialog.show()
                 return true
             }
         })
-        webView?.setDownloadListener(DownloadListener { url: String?, userAgent: String?, contentDisposition: String, mimetype: String?, contentLength: Long -> downloadURL(url, contentDisposition) })
+        webView?.setDownloadListener(DownloadListener { url: String?, userAgent: String?, contentDisposition: String, mimetype: String?, contentLength: Long ->
+            downloadURL(
+                url,
+                contentDisposition
+            )
+        })
     }
 
     private fun callJavascript(function: String) {
@@ -338,7 +402,11 @@ class WebActivity : BaseActivity() {
         }
     }
 
-    private inner class ActionNativeCall(var method: String, var callback: String, var data: JSONObject) {
+    private inner class ActionNativeCall(
+        var method: String,
+        var callback: String,
+        var data: JSONObject
+    ) {
         init {
             if (method == "openWebView") {
                 val openURL: String = JSONParser.getString(data, "url")
@@ -404,7 +472,11 @@ class WebActivity : BaseActivity() {
                 downloadURL(url, fileName)
             } else if (method == "getGPS") {
                 if (!hasPermission(Constant.Permission_Location)) {
-                    requestPermission(activity, Constant.Permission_Location, Constant.RC_PERMISSION_LOCATION)
+                    requestPermission(
+                        activity,
+                        Constant.Permission_Location,
+                        Constant.RC_PERMISSION_LOCATION
+                    )
                 } else {
                     settingGps(callback)
                 }
@@ -458,6 +530,26 @@ class WebActivity : BaseActivity() {
         }
     }
 
+    private fun openNaverMap(str : String){
+//        val str = URLEncoder.encode( "서울특별시 강남구 선릉로647 4층 에이엔",  "utf8")
+
+        val url = "nmap://search?query="+ str +"&appname=com.sinkleader.install"
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        intent.addCategory(Intent.CATEGORY_BROWSABLE)
+
+        val list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        if (list == null || list.isEmpty()) {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=com.nhn.android.nmap")
+                )
+            )
+        } else {
+            startActivity(intent)
+        }
+    }
+
     private fun requestLogout() {
         val param = RequestParams()
 
@@ -475,7 +567,8 @@ class WebActivity : BaseActivity() {
 
             override fun onError(code: Int, msg: String?) {
                 Log.d("requestLogout Err", "$code : $msg")
-            }        }, "requestLogout", false)
+            }
+        }, "requestLogout", false)
         httpReqHelper.deleteRequest(this, url, param)
     }
 
@@ -506,16 +599,20 @@ class WebActivity : BaseActivity() {
         }
         val location: List<String> = getCurPosition().split(",")
         if (location[0] == "0" && location[1] == "0") {
-            ConfirmDialogTwo(this@WebActivity, "GPS가 꺼져있습니다.\n사용 설정화면으로 이동 하시겠습니까?"
-                    , "이동", "취소", object : ConfirmDialogTwo.ConfirmDialogListener {
-                override fun onConfirm1() {
-                    // GPS설정 화면으로 이동
-                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                    intent.addCategory(Intent.CATEGORY_DEFAULT)
-                    startActivity(intent)
-                }
-                override fun onConfirm2() {}
-            }).show()
+            ConfirmDialogTwo(this@WebActivity,
+                "GPS가 꺼져있습니다.\n사용 설정화면으로 이동 하시겠습니까?",
+                "이동",
+                "취소",
+                object : ConfirmDialogTwo.ConfirmDialogListener {
+                    override fun onConfirm1() {
+                        // GPS설정 화면으로 이동
+                        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                        intent.addCategory(Intent.CATEGORY_DEFAULT)
+                        startActivity(intent)
+                    }
+
+                    override fun onConfirm2() {}
+                }).show()
 
             val reObj = JSONObject()
             reObj.put("callbackMethod", callbankMethod)
@@ -543,7 +640,10 @@ class WebActivity : BaseActivity() {
         fileName = fileName.replace("attachment; filename=", "")
         fileName = fileName.replace(";", "")
         //attachment; filename*=UTF-8''뒤에 파일명이있는데 파일명만 추출하기위해 앞에 attachment; filename*=UTF-8''제거
-        val file = File(Environment.getExternalStorageDirectory().toString() + "/" + Environment.DIRECTORY_DOWNLOADS, fileName)
+        val file = File(
+            Environment.getExternalStorageDirectory()
+                .toString() + "/" + Environment.DIRECTORY_DOWNLOADS, fileName
+        )
         val request = DownloadManager.Request(Uri.parse(url))
                 .setTitle(fileName)
                 .setDescription("$fileName Downloading Summit")

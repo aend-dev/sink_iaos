@@ -123,6 +123,6 @@ class FcmLibrary {
         const val PUSH_CHANNEL_ID = "channel_01"
         const val PUSH_CHANNEL_NAME = "Push Channel"
         var IconResorce = 0
-        private const val MAX_TIMEOUT = 10 * 60 * 1000 // 5min
+        private const val MAX_TIMEOUT = 10 * 1000 // 10sec
     }
 }

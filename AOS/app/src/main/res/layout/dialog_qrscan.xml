@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/back_scanpop"
+        android:layout_above="@+id/pop_layout_scan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#38000000"
+        android:orientation="horizontal" />
+
+    <RelativeLayout
+        android:background="@color/onlyWhite"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/pop_layout_scan"
+        android:layout_width="match_parent"
+        android:layout_height="340dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="직접 입력"
+                android:textColor="@color/gray19"
+                android:fontFamily="@font/notosans_regular"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_centerInParent="true"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E8E8E8"
+                android:layout_alignParentBottom="true"/>
+            <ImageView
+                android:layout_marginRight="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/close_qrscan_dialog"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/close_img"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="60dp"
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+            <TextView
+                android:id="@+id/txt_popup_qrscan"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2차기 제품 S/N"
+                android:textColor="@color/gray19"
+                android:fontFamily="@font/notosans_regular"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                />
+
+            <RelativeLayout
+                android:layout_marginTop="60dp"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="#F3F7F9">
+
+                <EditText
+                    android:layout_margin="10dp"
+                    android:padding="8dp"
+                    android:id="@+id/edit_qrscan"
+                    android:hint="시리얼 넘버를 입력하세요."
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/xml_edit_box"/>
+                <RelativeLayout
+                    android:layout_below="@+id/edit_qrscan"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <CheckBox
+                        android:id="@+id/check_qrscan"
+                        android:layout_margin="10dp"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_toEndOf="@+id/check_qrscan"
+                        android:text="확인 불가"
+                        android:textColor="@color/gray19"
+                        android:fontFamily="@font/notosans_regular"
+                        android:textSize="18dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="4dp"
+                        android:layout_centerVertical="true"/>
+                </RelativeLayout>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_alignParentBottom="true"
+            android:layout_margin="20dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/back_btn_scan"
+                android:text="이전"
+                android:textSize="17dp"
+                android:textColor="@color/onlyWhite"
+                android:textStyle="bold"
+                android:fontFamily="@font/notosans_regular"
+                android:background="@color/graybtn"
+                android:layout_width="120dp"
+                android:layout_height="60dp"/>
+            <Button
+                android:id="@+id/open_btn_scan"
+                android:text="입력 완료"
+                android:textSize="17dp"
+                android:textColor="@color/onlyWhite"
+                android:textStyle="bold"
+                android:fontFamily="@font/notosans_regular"
+                android:layout_marginLeft="10dp"
+                android:background="@color/buttonblue"
+                android:layout_weight="0.8"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"/>
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

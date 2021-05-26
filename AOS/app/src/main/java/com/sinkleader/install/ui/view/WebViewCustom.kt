@@ -77,6 +77,6 @@ class WebViewCustom : WebView {
     }
 
     companion object {
-        const val mUserAgent = "Superbin-Mobile"
+        const val mUserAgent = "SinkLeader-Mobile"
     }
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+
+
+
+        <domain includeSubdomains="true">office.aend.co.kr</domain>
+
+        <domain includeSubdomains="true">dapi.kakao.com</domain>
+        <domain includeSubdomains="true">t1.daumcdn.net</domain>
+        <domain includeSubdomains="true">s1.daumcdn.net</domain>
+        <domain includeSubdomains="true">i1.daumcdn.net</domain>
+
+        <domain includeSubdomains="true">map0.daumcdn.net</domain>
+        <domain includeSubdomains="true">map1.daumcdn.net</domain>
+        <domain includeSubdomains="true">map2.daumcdn.net</domain>
+        <domain includeSubdomains="true">map3.daumcdn.net</domain>
+        <domain includeSubdomains="true">map4.daumcdn.net</domain>
+        <domain includeSubdomains="true">map5.daumcdn.net</domain>
+        <domain includeSubdomains="true">map6.daumcdn.net</domain>
+    </domain-config>
+</network-security-config>

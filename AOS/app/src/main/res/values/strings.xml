@@ -2,8 +2,13 @@
     <string name="app_name">SinkLeader</string>
 
 
+    <string name="server_error">시스템 점검 중입니다.\n보다 좋은 서비스로 보답 드리겠습니다.</string>
+    <string name="pms_des">해당 기능을 사용하려면 권한이 필요합니다. 권한을 허용해주세요.</string>
+    <string name="app_finish_message">"'뒤로' 버튼을 한번 더 누르면 종료됩니다."</string>
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
+    <string name="network_err">네트워크가 연결되어있지 않습니다.\nWi-Fi/3G/LTE/5G 연결 후 이용 가능합니다.\n확인을 누르면 앱이 종료됩니다.</string>
+
     <string name="phone_number">1688-7992</string>
 
     <string name="mms_red_text">※ 문자 메시지가 수신되지 않으면\n스팸메시지를 확인바랍니다.</string>
-
 </resources>
