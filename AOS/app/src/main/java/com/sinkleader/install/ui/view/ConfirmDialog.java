@@ -14,27 +14,18 @@ import com.sinkleader.install.R;
  */
 
 public class ConfirmDialog extends BaseDialog {
-    TextView tv_title;
     TextView tv_content;
     TextView tv_confirm1;
 
     private ConfirmDialogListener m_listener;
 
-    public ConfirmDialog(Context context, CharSequence content, String title,String confirm1, ConfirmDialogListener listener) {
+    public ConfirmDialog(Context context, CharSequence content,String confirm1, ConfirmDialogListener listener) {
         super(context, android.R.style.Theme_Translucent_NoTitleBar);
 
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         setContentView(R.layout.dialog_confirm);
-
-        tv_title = findViewById(R.id.title_content);
-
-        if (title == null || title.length() == 0){
-            tv_title.setVisibility(View.GONE);
-        }else{
-            tv_title.setText(title);
-        }
 
         tv_content = findViewById(R.id.tv_content);
         tv_confirm1 = findViewById(R.id.tv_confirm1);

@@ -7,16 +7,12 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.sinkleader.install.R;
-
-import droidninja.filepicker.views.SmoothCheckBox;
 
 /**
  * Created by Snow on 12/2/2017.
@@ -48,7 +44,7 @@ public class QRscanDialog extends BaseDialog {
         tv_content = findViewById(R.id.txt_popup_qrscan);
         edit_sirlal = findViewById(R.id.edit_qrscan);
         checkBox = findViewById(R.id.check_qrscan);
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked)->{
+        checkBox.setOnCheckedChangeListener((check, isChecked)->{
             Log.d("checkBox", "isChecked : " + isChecked);
 
             if (isChecked){

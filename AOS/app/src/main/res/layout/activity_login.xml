@@ -42,6 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:textSize="16dp"
+            android:singleLine="true"
             android:textColor="@color/gray19"
             android:fontFamily="@font/notosans_regular"
             android:hint="아이디를 입력하세요."
@@ -65,9 +66,11 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:textSize="16dp"
+            android:singleLine="true"
             android:textColor="@color/gray19"
             android:fontFamily="@font/notosans_regular"
             android:hint="비밀번호를 입력하세요."
+            android:inputType="numberPassword"
             />
         <LinearLayout
             android:id="@+id/check_layout"
@@ -145,6 +148,7 @@
                 android:text="비밀번호 찾기"
                 android:textColor="@color/gray19"
                 android:textSize="17dp"
+                android:fontFamily="@font/notosans_regular"
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/rock_image"
                 android:layout_width="wrap_content"
@@ -166,6 +170,7 @@
             android:text="(주)세인홈시스"
             android:textColor="@color/bottomtextblue"
             android:textSize="17dp"
+            android:fontFamily="@font/notosans_regular"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -177,6 +182,7 @@
             android:textColor="@color/bottomtextblue"
             android:textSize="17dp"
             android:textStyle="bold"
+            android:fontFamily="@font/notosans_regular"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

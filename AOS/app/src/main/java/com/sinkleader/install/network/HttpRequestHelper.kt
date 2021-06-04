@@ -10,6 +10,7 @@ import com.loopj.android.http.*
 import com.sinkleader.install.R
 import com.sinkleader.install.ui.view.ConfirmDialog
 import com.sinkleader.install.util.PrefMgr
+import com.sinkleader.install.util.Util
 import cz.msebera.android.httpclient.Header
 import cz.msebera.android.httpclient.client.params.ClientPNames
 import cz.msebera.android.httpclient.entity.StringEntity
@@ -164,11 +165,12 @@ class HttpRequestHelper{
     private fun setCommonHeader() {
         m_asyncHttpClient.removeAllHeaders()
         // Header에 토큰 추가
-        val token = PrefMgr.instance.getString("token", "")
-        val sno = PrefMgr.instance.getString("user_sno", "")
-        m_asyncHttpClient.addHeader("x-token", token);
-        m_asyncHttpClient.addHeader("x-refresh-token", token);
-        m_asyncHttpClient.addHeader("user-sno", sno);
+        val token = Util.TOKEN
+        val retoken = Util.RETOKEN
+        val sno = Util.USER_SEQ
+        m_asyncHttpClient.addHeader("x-token", token)
+        m_asyncHttpClient.addHeader("x-refresh-token", retoken)
+        m_asyncHttpClient.addHeader("user-sno", sno)
     }
 
     fun postRequest(url: String?, params: RequestParams?) {
@@ -182,7 +184,6 @@ class HttpRequestHelper{
                 val dialog = ConfirmDialog(
                     m_context,
                     m_context?.resources?.getString(R.string.network_err),
-                    "네트워크 연결되지 않음",
                     "확인", {})
                 dialog.show()
             }
@@ -206,7 +207,6 @@ class HttpRequestHelper{
                 val dialog = ConfirmDialog(
                     m_context,
                     m_context?.resources?.getString(R.string.network_err),
-                    "네트워크 연결되지 않음",
                     "확인", {})
                 dialog.show()
             }
@@ -230,7 +230,6 @@ class HttpRequestHelper{
                 val dialog = ConfirmDialog(
                     m_context,
                     m_context?.resources?.getString(R.string.network_err),
-                    "네트워크 연결되지 않음",
                     "확인", {})
                 dialog.show()
             }
@@ -254,7 +253,6 @@ class HttpRequestHelper{
                 val dialog = ConfirmDialog(
                     m_context,
                     m_context?.resources?.getString(R.string.network_err),
-                    "네트워크 연결되지 않음",
                     "확인", {})
                 dialog.show()
             }
@@ -272,7 +270,6 @@ class HttpRequestHelper{
                 val dialog = ConfirmDialog(
                     m_context,
                     m_context?.resources?.getString(R.string.network_err),
-                    "네트워크 연결되지 않음",
                     "확인", {})
                 dialog.show()
             }
@@ -290,7 +287,6 @@ class HttpRequestHelper{
                 val dialog = ConfirmDialog(
                     m_context,
                     m_context?.resources?.getString(R.string.network_err),
-                    "네트워크 연결되지 않음",
                     "확인", {})
                 dialog.show()
             }
@@ -308,7 +304,6 @@ class HttpRequestHelper{
                 val dialog = ConfirmDialog(
                     m_context,
                     m_context?.resources?.getString(R.string.network_err),
-                    "네트워크 연결되지 않음",
                     "확인", {})
                 dialog.show()
             }

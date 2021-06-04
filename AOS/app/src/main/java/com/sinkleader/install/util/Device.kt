@@ -16,7 +16,7 @@ object Device {
             obj.put("os_version", Util.androidVersion)
             obj.put("dev_ip", Util.iPAddress)
             obj.put("dev_token", FcmLibrary.instance?.token)
-            obj.put("app_version", Util.version)
+//            obj.put("app_version", Util.version)
 
 //            if (Build.VERSION.SDK_INT < 29)
 //                object.put("uuid", Util.getDeviceId(context));

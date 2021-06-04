@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sinkleader.install.R;
@@ -37,6 +38,12 @@ public class ConfirmDialogTwo extends BaseDialog {
         tv_confirm2.setOnClickListener(view -> {
             onConfirm2();
         });
+
+        ImageView close = findViewById(R.id.img_close);
+        close.setOnClickListener(view -> {
+            dismiss();
+        });
+
         setProperty(content, confirm1, confirm2);
         m_listener = listener;
     }

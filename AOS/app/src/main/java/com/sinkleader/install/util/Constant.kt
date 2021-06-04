@@ -7,7 +7,7 @@ interface Constant {
         val Serverlist = arrayOf(
                 "http://api.superbin.co.kr/app",
                 "http://api.app.superbin.link",
-                "http://office.aend.co.kr:20002",
+                "http://192.168.29.248:30000",
                 "http://192.168.29.185:8120"
         )
 
@@ -26,11 +26,13 @@ interface Constant {
         )
 
         val Permission_Login = arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_FINE_LOCATION)
 
         const val RC_PERMISSION_CAMERA = 1000
         const val RC_PERMISSION_GALLERY = 1001
         const val RC_PERMISSION_LOCATION = 1002
-        const val RC_PERMISSION_FILE = 1003
+        const val RC_PERMISSION_LOGIN = 1003
     }
 }

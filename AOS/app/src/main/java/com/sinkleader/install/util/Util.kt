@@ -61,10 +61,12 @@ class Util : Constant {
         var TOKEN = ""
         var RETOKEN = ""
         var USER_SEQ = ""
-        var USER_PHONE = ""
+        var USER_GRADE = ""
         var USER_NAME = ""
         var USER_IMG = ""
+        var USER_TYPE = ""
         var USER_LASTDATE = ""
+        var USER_CENTER_SEQ = ""
 
         var SIGN_TYPE = ""
         var SIGN_ID = ""
@@ -612,11 +614,15 @@ class Util : Constant {
         fun moveWebPage(activity:Activity, user:JSONObject, url:String) {
             TOKEN = JSONParser.getString(user, "token")
             RETOKEN = JSONParser.getString(user, "refresh_token")
-            USER_PHONE = JSONParser.getString(user, "cell_phone")
-            USER_SEQ = JSONParser.getInt(user, "user_sno").toString()
+            USER_GRADE = JSONParser.getString(user, "app_user_grade")
+
+            USER_TYPE = JSONParser.getString(user, "user_type")
+            USER_CENTER_SEQ = JSONParser.getString(user, "center_seq")
+            USER_IMG = JSONParser.getString(user, "profile_img_url")
+
+            USER_SEQ = JSONParser.getInt(user, "user_seq").toString()
             USER_NAME = JSONParser.getString(user, "user_name")
             USER_LASTDATE = JSONParser.getString(user, "last_access_date")
-            PrefMgr.instance.put("token", TOKEN)
 
             var web_url = Constant.FrontUrls[FrontIndex] + "/home"
             if (!url?.equals("")){

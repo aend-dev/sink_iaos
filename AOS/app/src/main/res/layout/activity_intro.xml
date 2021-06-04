@@ -19,7 +19,7 @@
         android:layout_marginBottom="30dp"
         android:layout_centerHorizontal="true"
         android:layout_width="200dp"
-        android:layout_height="100dp"
+        android:layout_height="60dp"
         android:src="@drawable/intro_bottom"
         />
 </RelativeLayout>

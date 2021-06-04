@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <WebView
+    <com.sinkleader.install.ui.view.WebViewCustom
         android:id="@+id/webview_web"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

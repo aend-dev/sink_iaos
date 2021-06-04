@@ -1,6 +1,5 @@
 package com.sinkleader.install.ui.activity
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,6 +10,7 @@ import com.sinkleader.install.network.HttpRequestHelper
 import com.sinkleader.install.network.HttpRequestHelper.Companion.instance
 import com.sinkleader.install.network.JSONParser
 import com.sinkleader.install.ui.view.ConfirmDialog
+import com.sinkleader.install.ui.view.ConfirmDialogTwo
 import com.sinkleader.install.util.Constant
 import com.sinkleader.install.util.Util
 import cz.msebera.android.httpclient.protocol.HTTP
@@ -26,11 +26,6 @@ class PasswordActivity : BaseActivity(){
     private var limit_date = ""
     private var gTimer: Timer? = null
     private var limitTime: Long = 0
-
-    var user_no = ""
-
-    var gvTxtID : TextView? = null
-//    var gvTxtPass : TextView? = null
 
     var limit: TextView? = null
     var btnRequest: Button? = null
@@ -51,6 +46,7 @@ class PasswordActivity : BaseActivity(){
         setContentView(R.layout.activity_password)
         activity = this
         initUI()
+        resetData()
     }
 
     override fun onDestroy() {
@@ -72,8 +68,10 @@ class PasswordActivity : BaseActivity(){
         btnCheck = findViewById(R.id.btn_oauth_password)
 
         btnNext = findViewById(R.id.button_password)
+        btnNext?.isEnabled = false
 
         gEditPASS = findViewById(R.id.edit_pw_password)
+        gEditPASS?.isEnabled = false
 
         btnRequest?.setOnClickListener{
             requestFindSMS()
@@ -81,6 +79,27 @@ class PasswordActivity : BaseActivity(){
 
         btnCheck?.setOnClickListener{
             requestAuthSMS()
+        }
+
+        btnNext?.setOnClickListener {
+            var errText = ""
+            if (gEditPASS!!.text.length < 6) {
+                errText = "비밀번호를 다시 입력하세요."
+            }
+
+            if (errText != "") {
+                val dialog = ConfirmDialog(activity, errText, "확인", null)
+                dialog.show()
+            }else{
+                ConfirmDialogTwo(this,"비밀번호를 변경하시겠습니까?","취소", "확인", object : ConfirmDialogTwo.ConfirmDialogListener{
+                    override fun onConfirm1() {
+                    }
+
+                    override fun onConfirm2() {
+                        requestNewPass()
+                    }
+                }).show()
+            }
         }
 
         gOauthMain =  findViewById(R.id.oauthmain_password)
@@ -108,30 +127,33 @@ class PasswordActivity : BaseActivity(){
     private fun requestFindSMS() {
         var entity : StringEntity
         var obj = JSONObject()
-        var type = "SEARCH_ID"
-        var id = "string"
-        if (gEditID != null){
-            id = gEditID?.text.toString()
-        }
+
+        var type = "SEARCH_PASSWORD"
+        var id = gEditID?.text.toString()
         val phone = gEditPhone?.text.toString()
+
         var errText = ""
 
-        if (phone.length == 0) {
+        if (id.length == 0) {
+            errText = "아이디를 입력하세요."
+        }else if (phone.length == 0) {
             errText = "휴대폰 번호를 입력하세요."
         }
+
         if (errText != "") {
-            val dialog = ConfirmDialog(activity, errText, "알림", "확인", null)
+            val dialog = ConfirmDialog(activity, errText, "확인", null)
             dialog.show()
             return
         }
 
+        obj.put("auth_type", type)
         obj.put("cell_phone", phone)
         obj.put("user_id", id)
         entity = StringEntity(obj.toString(), StandardCharsets.UTF_8)
         entity.setContentType("application/json")
 
 
-        val url: String = Constant.Serverlist.get(Util.ServerIndex) + "/sms/authCode"
+        val url: String = Constant.Serverlist.get(Util.ServerIndex) + "/v1/common/sms/send"
         val httpReqHelper: HttpRequestHelper? = instance
         httpReqHelper?.init(this, this, object : HttpRequestHelper.OnParseResponseListener {
             override fun onSuccessResponse(apiName: String?, response: JSONObject?) {
@@ -152,13 +174,10 @@ class PasswordActivity : BaseActivity(){
                         gEditPhone?.isEnabled = false
 
                         btnRequest?.setText("재발급")
-//                        btnRequest?.setBackgroundResource(R.drawable.xml_white_btn)
-                        btnRequest?.setTextColor(Color.BLACK)
 
                         btnCheck?.isEnabled = true
-//                        btnCheck?.setBackgroundResource(R.drawable.xml_findid_btn)
 
-                        val dialog = ConfirmDialog(activity, "인증번호를 전송하였습니다.", "알림", "확인", null)
+                        val dialog = ConfirmDialog(activity, "인증번호를 전송하였습니다.",  "확인", null)
                         dialog.show()
                         setTimer()
                     } catch (e: ParseException) {
@@ -166,7 +185,7 @@ class PasswordActivity : BaseActivity(){
                     }
                 } else {
                     val message: String = JSONParser.getString(response, "message")
-                    val dialog = ConfirmDialog(activity, message, "알림", "확인", null)
+                    val dialog = ConfirmDialog(activity, message, "확인", null)
                     dialog.show()
                 }
             }
@@ -174,7 +193,7 @@ class PasswordActivity : BaseActivity(){
             override fun onError(code: Int, msg: String?) {
                 Log.e("onError", "$msg $code")
                 activity?.runOnUiThread {
-                    val dialog = ConfirmDialog(activity, "$msg", "알림", "확인", null)
+                    val dialog = ConfirmDialog(activity, "$msg", "확인", null)
                     dialog.show()
                 }
             }
@@ -187,17 +206,18 @@ class PasswordActivity : BaseActivity(){
         var obj = JSONObject()
         val strNum = gEditAuth!!.text.toString()
         if (strNum == "") {
-            val dialog = ConfirmDialog(activity, "인증번호를 입력하세요", "알림", "확인", null)
+            val dialog = ConfirmDialog(activity, "인증번호를 입력하세요", "확인", null)
             dialog.show()
             return
         }
         val num = strNum.toInt()
 
+        obj.put("auth_type", "SEARCH_PASSWORD")
         obj.put("sms_auth_id", sms_auth_id)
         obj.put("auth_number", num)
-        entity = StringEntity(obj.toString(), HTTP.UTF_8)
+        entity = StringEntity(obj.toString(), "UTF-8")
 
-        val url: String = Constant.Serverlist.get(Util.ServerIndex) + "/sms/authCode"
+        val url: String = Constant.Serverlist.get(Util.ServerIndex) + "/v1/common/sms/check"
         val httpReqHelper: HttpRequestHelper? = instance
         httpReqHelper?.init(this, this, object : HttpRequestHelper.OnParseResponseListener {
             override fun onSuccessResponse(apiName: String?, response: JSONObject?) {
@@ -210,14 +230,19 @@ class PasswordActivity : BaseActivity(){
                         limit!!.text = ""
                         btnCheck!!.isEnabled = false
 
+                        gOauthPopup?.visibility = View.VISIBLE //popup_password
+                        gOauthMain?.visibility = View.INVISIBLE //oauthmain_password
+
+                        btnNext?.isEnabled = true
+                        gEditPASS?.isEnabled = true
 
                     } else{
-                        val dialog = ConfirmDialog(activity, "인증번호가 틀렸습니다.", "알림", "확인", null)
+                        val dialog = ConfirmDialog(activity, "인증번호가 틀렸습니다.", "확인", null)
                         dialog.show()
                     }
                 } else {
                     val message: String = JSONParser.getString(response, "message")
-                    val dialog = ConfirmDialog(activity, message, "알림", "확인", null)
+                    val dialog = ConfirmDialog(activity, message, "확인", null)
                     dialog.show()
                 }
             }
@@ -229,71 +254,22 @@ class PasswordActivity : BaseActivity(){
         httpReqHelper?.putJsonRequest(activity, url, entity)
     }
 
-    private fun requestNext() {
-        var entity : StringEntity
-        var obj = JSONObject()
-
-        val phone = gEditPhone?.text.toString()
-        var sub_url = "/auth/find/password"
-
-        obj.put("user_id", gEditID?.text.toString())
-        obj.put("cell_phone", phone)
-
-        entity = StringEntity(obj.toString(), HTTP.UTF_8)
-        entity.setContentType("application/json")
-
-        val url: String = Constant.Serverlist.get(Util.ServerIndex) + sub_url
-        val httpReqHelper: HttpRequestHelper? = instance
-        httpReqHelper?.init(this, this, object : HttpRequestHelper.OnParseResponseListener {
-            override fun onSuccessResponse(apiName: String?, response: JSONObject?) {
-                Log.d(apiName, response.toString())
-                val result: Int = JSONParser.getInt(response!!, "result")
-                if (result == 0) {
-                    val data = JSONParser.getJSONObject(response!!, "data")
-
-                    val user_id = JSONParser.getString(data, "ds_uid")
-                    val date_str = JSONParser.getString(data, "dt_reg_dt_str")
-
-
-                } else {
-                    val message: String = JSONParser.getString(response, "message")
-                    val dialog = ConfirmDialog(activity, message, "알림", "확인", null)
-                    dialog.show()
-                }
-            }
-
-            override fun onError(code: Int, msg: String?) {
-                Log.e("onError", "$msg $code")
-                activity?.runOnUiThread {
-                    val dialog = ConfirmDialog(activity, "$msg", "알림", "확인", null)
-                    dialog.show()
-                }
-            }
-        }, "requestFindSMS", false)
-        httpReqHelper?.postJsonRequest(activity, url, entity)
-    }
-
     private fun requestNewPass() {
         val entity : StringEntity
         val obj = JSONObject()
 
         val pass = gEditPASS?.text.toString()
+        val phone = gEditPhone?.text.toString()
+        val id = gEditID?.text.toString()
 
-        var errText = ""
-        if (pass.length < 6) {
-            errText = "비밀번호를 다시 입력하세요."
-        }
-
-        if (errText != "") {
-            return
-        }
-
-        obj.put("password", pass)
-        obj.put("user_sno", user_no)
-        entity = StringEntity(obj.toString(), HTTP.UTF_8)
+        obj.put("cell_phone", phone)
+        obj.put("password_new", pass)
+        obj.put("sms_auth_id", sms_auth_id)
+        obj.put("user_id", id)
+        entity = StringEntity(obj.toString(), "UTF-8")
         entity.setContentType("application/json")
 
-        val url: String = Constant.Serverlist.get(Util.ServerIndex) + "/auth/reset/password"
+        val url: String = Constant.Serverlist.get(Util.ServerIndex) + "/v1/user/find/password"
         val httpReqHelper: HttpRequestHelper? = instance
         httpReqHelper?.init(this, this, object : HttpRequestHelper.OnParseResponseListener {
             override fun onSuccessResponse(apiName: String?, response: JSONObject?) {
@@ -303,16 +279,16 @@ class PasswordActivity : BaseActivity(){
                     var message: String = JSONParser.getString(response, "message")
 
                     if (message.length == 0){
-                        message = "비밀번호 재설정이 완료되었습니다.\n지금 바로 수퍼빈에 로그인하세요."
+                        message = "변경되었습니다."
                     }
 
-                    val dialog = ConfirmDialog(activity, message, "비밀번호 설정 완료", "확인"){
+                    val dialog = ConfirmDialog(activity, message, "확인"){
                         activity?.finish()
                     }
                     dialog.show()
                 } else {
                     val message: String = JSONParser.getString(response, "message")
-                    val dialog = ConfirmDialog(activity, message, "비밀번호 설정 실패", "확인", null)
+                    val dialog = ConfirmDialog(activity, message, "확인", null)
                     dialog.show()
                 }
             }
@@ -321,12 +297,12 @@ class PasswordActivity : BaseActivity(){
                 Log.e("onError", "$msg $code")
 
                 activity?.runOnUiThread {
-                    val dialog = ConfirmDialog(activity, "$msg", "알림", "확인", null)
+                    val dialog = ConfirmDialog(activity, "$msg", "확인", null)
                     dialog.show()
                 }
             }
-        }, "requestFindSMS", false)
-        httpReqHelper?.postJsonRequest(activity, url, entity)
+        }, "requestNewPass", false)
+        httpReqHelper?.putJsonRequest(activity, url, entity)
     }
 
     fun setTimer() {
@@ -342,7 +318,7 @@ class PasswordActivity : BaseActivity(){
                     gTimer!!.cancel()
                     runOnUiThread {
                         limit!!.text = ""
-                        val dialog = ConfirmDialog(activity, "인증 시간이 초과하였습니다", "알림", "확인", {})
+                        val dialog = ConfirmDialog(activity, "인증 시간이 초과하였습니다", "확인", {})
                         dialog.show()
                         btnRequest!!.isEnabled = true
                         gEditID?.isEnabled = true

@@ -27,7 +27,6 @@ import com.sinkleader.install.util.Util
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
-import java.net.URLEncoder
 import java.util.*
 
 
@@ -35,11 +34,9 @@ class WebActivity : BaseActivity() {
     val MOVE_LOCATION = 225
 
     var webView: WebViewCustom? = null
-    var TOKEN: String? = null
     var activity: BaseActivity? = null
     var isBack = false
     var isLayer = false
-
 
     var uploadMessage: ValueCallback<Array<Uri?>>? = null //이미지 업로드시 사용
 
@@ -173,7 +170,6 @@ class WebActivity : BaseActivity() {
                     val dialog = ConfirmDialog(
                         activity,
                         "위치 사용 권한이 없습니다.\n애플리케이션 설정에서 권한을 허가해주세요.",
-                        "알림",
                         "확인",
                         {
                             var intent = Intent(
@@ -202,7 +198,6 @@ class WebActivity : BaseActivity() {
 
     private fun initUI() {
         activity = this
-        TOKEN = intent.getStringExtra("TOKEN")
         val back = intent.getBooleanExtra("bck", false)
 
         setFinishAppWhenPressedBackKey(back)
@@ -317,7 +312,6 @@ class WebActivity : BaseActivity() {
                 val dialog = ConfirmDialog(
                     this@WebActivity,
                     message,
-                    "",
                     "확인",
                     object : ConfirmDialog.ConfirmDialogListener {
                         override fun onConfirm1() {
@@ -412,7 +406,6 @@ class WebActivity : BaseActivity() {
                 val openURL: String = JSONParser.getString(data, "url")
                 val intent = Intent(this@WebActivity, WebActivity::class.java)
                 intent.putExtra("WEB_URL", openURL)
-                intent.putExtra("TOKEN", TOKEN)
                 activity!!.startActivityForResult(intent, 324)
             } else if (method == "changeUrlWebView") { // native_call? callJavascript &func=myFunction &value0=text&type0=string
                 val url: String = JSONParser.getString(data, "url")
@@ -428,7 +421,12 @@ class WebActivity : BaseActivity() {
                 val obj: JSONObject = Device.getInfo(activity)
                 obj.put("token", Util.TOKEN)
                 obj.put("refresh_token", Util.RETOKEN)
-                obj.put("cell_phone", Util.USER_PHONE)
+                obj.put("app_user_grade", Util.USER_GRADE)
+
+                obj.put("user_type", Util.USER_TYPE)
+                obj.put("center_seq", Util.USER_CENTER_SEQ)
+                obj.put("profile_img_url", Util.USER_IMG)
+
                 obj.put("user_sno", Util.USER_SEQ)
                 obj.put("user_name", Util.USER_NAME)
                 obj.put("last_access_date", Util.USER_LASTDATE)
@@ -501,8 +499,14 @@ class WebActivity : BaseActivity() {
 
                 Util.TOKEN = ""
                 Util.RETOKEN = ""
+                Util.USER_GRADE = ""
+                Util.USER_TYPE = ""
+                Util.USER_CENTER_SEQ = ""
+                Util.USER_IMG = ""
                 Util.USER_SEQ = ""
-                Util.USER_PHONE = ""
+                Util.USER_NAME = ""
+                Util.USER_LASTDATE = ""
+
                 PrefMgr.instance.put("token", "")
 
             } else if (method == "actionShare") {
@@ -574,7 +578,6 @@ class WebActivity : BaseActivity() {
 
     private fun loadURL(url: String) {
         val header: MutableMap<String, String> = HashMap()
-        //        String token = PrefMgr.getInstance().getString("token","");
         val token = Util.TOKEN
         if (token != "") {
             header["x-token"] = token

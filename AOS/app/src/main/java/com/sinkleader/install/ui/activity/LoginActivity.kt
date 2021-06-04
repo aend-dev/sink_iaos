@@ -19,13 +19,10 @@ import com.sinkleader.install.util.Device
 import com.sinkleader.install.util.PrefMgr
 import com.sinkleader.install.util.Util
 import cz.msebera.android.httpclient.entity.StringEntity
-import cz.msebera.android.httpclient.protocol.HTTP
 import org.json.JSONException
 import org.json.JSONObject
 
 class LoginActivity : BaseActivity() {
-    private var isLogin = false
-
     var editID : EditText? = null
     var editPASS : EditText? = null
 
@@ -38,13 +35,13 @@ class LoginActivity : BaseActivity() {
         setFinishAppWhenPressedBackKey(true)
 
         val cookieManager = CookieManager.getInstance()
-        cookieManager.removeAllCookies { `is`: Boolean? -> }
+        cookieManager.removeAllCookies { isRemove: Boolean? -> }
 
         WebStorage.getInstance().deleteAllData()
 
         initView()
-        if (! hasPermission(Constant.Permission_Location)!!){
-            requestPermission(this, Constant.Permission_Location, Constant.RC_PERMISSION_LOCATION)
+        if (! hasPermission(Constant.Permission_Login)){
+            requestPermission(this, Constant.Permission_Login, Constant.RC_PERMISSION_LOGIN)
         }
     }
 
@@ -61,10 +58,15 @@ class LoginActivity : BaseActivity() {
     }
 
     fun initView(){
+        val id = PrefMgr.instance.getString("user_id", "")!!
         editID = findViewById(R.id.edit_id_login)
+        editID?.setText(id)
         editPASS = findViewById(R.id.edit_pw_login)
 
         checkID = findViewById(R.id.check_save_login)
+        if (id.length != 0){
+            checkID?.isChecked = true
+        }
         checkAuto = findViewById(R.id.check_auto_login)
 
         val signIn : Button = findViewById(R.id.button_login)
@@ -80,6 +82,8 @@ class LoginActivity : BaseActivity() {
 
         val txt_call = findViewById<TextView>(R.id.txt_phone_login)
         txt_call.setOnClickListener {
+//            val intent = Intent(this, QRscenActivity::class.java)
+//            startActivity(intent)
             val tel = getString(R.string.phone_number)
             val tt = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$tel"))
             startActivity(tt)
@@ -99,11 +103,11 @@ class LoginActivity : BaseActivity() {
         try {
             val device : JSONObject = Device.getInfo(this)
 
-            val id = editID?.text.toString()
-            val pass = editPASS?.text.toString()
+            var id = editID?.text.toString()
+            var pass = editPASS?.text.toString()
 
-//            val id = "test3"
-//            val pass = "test12345"
+//            id = "aend001"
+//            pass = "admin1234!!"
 
             var errText = ""
             if (id.length == 0) {
@@ -111,7 +115,7 @@ class LoginActivity : BaseActivity() {
             }
 
             if (errText != "") {
-                ConfirmDialog(this, errText, "알림", "확인", {}).show()
+                ConfirmDialog(this, errText, "확인", {}).show()
                 return
             }
 
@@ -119,13 +123,13 @@ class LoginActivity : BaseActivity() {
             jsonEntity.put("password", pass)
             jsonEntity.put("userDevice", device)
 
-            entity = StringEntity(jsonEntity.toString(), HTTP.UTF_8)
+            entity = StringEntity(jsonEntity.toString(), "UTF-8")
 
         } catch (e: JSONException) {
             e.printStackTrace()
         }
 
-        val url: String = Constant.Serverlist.get(Util.ServerIndex) + "/auth/login"
+        val url: String = Constant.Serverlist.get(Util.ServerIndex) + "/v1/login/login"
         val httpReqHelper: HttpRequestHelper = HttpRequestHelper.instance
         httpReqHelper.init(activity, this, object : HttpRequestHelper.OnParseResponseListener {
             @Throws(JSONException::class)
@@ -140,11 +144,16 @@ class LoginActivity : BaseActivity() {
                     if (token == "") {
 
                     } else {
-//                        val refresh_token: String = JSONParser.getString(user, "refresh_token")
-                        val user_sno = JSONParser.getInt(user, "user_sno")
+                        val user_sno = JSONParser.getInt(user, "user_seq")
 
-                        PrefMgr.instance.put("token", token)
-                        PrefMgr.instance.put("user_sno", String.format("%d", user_sno))
+                        if (checkID?.isChecked!!){
+                            PrefMgr.instance.put("user_id", editID?.text!!.toString())
+                        }
+
+                        if (checkAuto?.isChecked!!){
+                            PrefMgr.instance.put("token", token)
+                            PrefMgr.instance.put("user_sno", String.format("%d", user_sno))
+                        }
 
                         Util.moveWebPage(this@LoginActivity, user, "")
                     }
@@ -156,10 +165,8 @@ class LoginActivity : BaseActivity() {
 
             override fun onError(code: Int, msg: String?) {
                 Log.e("onError", "$msg $code")
-//                Toast.makeText(this@LoginActivity, msg, Toast.LENGTH_SHORT).show()
-
                 activity.runOnUiThread {
-                    val dialog = ConfirmDialog(activity, msg, "로그인 실패", "확인", null)
+                    val dialog = ConfirmDialog(activity, msg, "확인", null)
                     dialog.show()
                 }
 

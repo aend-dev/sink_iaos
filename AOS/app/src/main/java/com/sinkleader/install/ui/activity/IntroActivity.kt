@@ -56,7 +56,6 @@ class IntroActivity : BaseActivity() {
             val dialog = ConfirmDialog(
                 activity,
                 resources.getString(R.string.network_err),
-                "네트워크 연결되지 않음",
                 "확인",
                 {
                     finish()
@@ -65,7 +64,7 @@ class IntroActivity : BaseActivity() {
             return
         }
 
-        val url: String = Constant.Serverlist.get(Util.ServerIndex) + "/app/info?os=AOS"
+        val url: String = Constant.Serverlist.get(Util.ServerIndex) + "/v1/main/app-version?os=AOS"
         val httpReqHelper: HttpRequestHelper? = HttpRequestHelper.instance
         httpReqHelper?.init(this, this, object : HttpRequestHelper.OnParseResponseListener {
             override fun onSuccessResponse(apiName: String?, response: JSONObject?) {
@@ -85,7 +84,7 @@ class IntroActivity : BaseActivity() {
 
                     if (isVer) {
                         if (upd_force.equals("Y")) {
-                            val dialog = ConfirmDialog(activity, msg, "알림", "확인") {
+                            val dialog = ConfirmDialog(activity, msg, "확인") {
                                 val marketLaunch = Intent(Intent.ACTION_VIEW)
                                 marketLaunch.data = Uri.parse(update_url)
                                 startActivity(marketLaunch)
@@ -122,7 +121,7 @@ class IntroActivity : BaseActivity() {
                     activity?.runOnUiThread {
                         if (!this@IntroActivity.isFinishing()) {
                             val message: String = JSONParser.getString(response, "message")
-                            val dialog = ConfirmDialog(activity, message, "알림", "확인", null)
+                            val dialog = ConfirmDialog(activity, message, "확인", null)
                             dialog.show()
                         }
                     }
@@ -137,7 +136,6 @@ class IntroActivity : BaseActivity() {
                         val dialog = ConfirmDialog(
                             activity,
                             "서버 시스템 점검중 입니다.\n잠시후 다시 이용 부탁드립니다.",
-                            "알림",
                             "확인",
                             null
                         )
@@ -179,7 +177,7 @@ class IntroActivity : BaseActivity() {
         obj.put("x_token", Util.TOKEN)
 
         var entity = StringEntity(obj.toString(), HTTP.UTF_8)
-        val url = Constant.Serverlist[Util.ServerIndex] + "/auth/autoLogin"
+        val url = Constant.Serverlist[Util.ServerIndex] + "/v1/login/autoLogin"
         val httpReqHelper: HttpRequestHelper = HttpRequestHelper.instance!!
         httpReqHelper.init(this, this, object : HttpRequestHelper.OnParseResponseListener {
             override fun onSuccessResponse(apiName: String?, response: JSONObject?) {
