@@ -82,8 +82,7 @@ class LoginActivity : BaseActivity() {
 
         val txt_call = findViewById<TextView>(R.id.txt_phone_login)
         txt_call.setOnClickListener {
-//            val intent = Intent(this, QRscenActivity::class.java)
-//            startActivity(intent)
+
             val tel = getString(R.string.phone_number)
             val tt = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$tel"))
             startActivity(tt)

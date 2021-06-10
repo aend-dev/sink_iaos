@@ -51,7 +51,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
-class Util : Constant {
+open class Util : Constant {
     private val mFace_FONT_NANUMSQUARE_LIGHT: Typeface? = null
     private val mFace_FONT_NANUMSQUARE_REGULAR: Typeface? = null
     private val mFace_FONT_NANUMSQUARE_BOLD: Typeface? = null
@@ -582,7 +582,7 @@ class Util : Constant {
             }
         }
 
-        fun getBase64String(content: String): String {
+        open fun getBase64String(content: String): String {
             return try {
                 val data = content.toByteArray(StandardCharsets.UTF_8)
                 Base64.encodeToString(data, Base64.DEFAULT)

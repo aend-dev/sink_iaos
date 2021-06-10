@@ -3,7 +3,10 @@
     <domain-config cleartextTrafficPermitted="true">
 
         <domain includeSubdomains="true">192.168.29.248</domain>
+        <domain includeSubdomains="true">192.168.29.194</domain>
         <domain includeSubdomains="true">office.aend.co.kr</domain>
+
+        <domain includeSubdomains="true">kkksssyyy.iptime.org</domain>
 
         <domain includeSubdomains="true">dapi.kakao.com</domain>
         <domain includeSubdomains="true">t1.daumcdn.net</domain>

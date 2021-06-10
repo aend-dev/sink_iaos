@@ -42,6 +42,7 @@ public class QRscanDialog extends BaseDialog {
         });
 
         tv_content = findViewById(R.id.txt_popup_qrscan);
+        tv_content.setText(content);
         edit_sirlal = findViewById(R.id.edit_qrscan);
         checkBox = findViewById(R.id.check_qrscan);
         checkBox.setOnCheckedChangeListener((check, isChecked)->{

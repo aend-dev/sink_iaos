@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "540755620968",
-    "project_id": "sinkleader-dev",
-    "storage_bucket": "sinkleader-dev.appspot.com"
+    "project_number": "451754369548",
+    "project_id": "seinhomsis",
+    "storage_bucket": "seinhomsis.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:540755620968:android:6c1a65dc1cdf05d3b5f7dd",
+        "mobilesdk_app_id": "1:451754369548:android:f05ced5e816eed6ff24429",
         "android_client_info": {
           "package_name": "com.sinkleader.install"
         }
       },
       "oauth_client": [
         {
-          "client_id": "540755620968-38904mdj63773gm761ehjoipbepskgpe.apps.googleusercontent.com",
+          "client_id": "451754369548-2f2v9lj712vaad28kllejon8v7s8ggj1.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBsVPN8eLcdAQZIA17EhdtP_vVovrkBtHQ"
+          "current_key": "AIzaSyD1T83iTKqde43RPWd0kpSLfipzMi4gXJo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "540755620968-38904mdj63773gm761ehjoipbepskgpe.apps.googleusercontent.com",
+              "client_id": "451754369548-2f2v9lj712vaad28kllejon8v7s8ggj1.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

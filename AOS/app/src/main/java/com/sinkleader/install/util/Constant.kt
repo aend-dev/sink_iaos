@@ -5,10 +5,11 @@ import android.Manifest
 interface Constant {
     companion object {
         val Serverlist = arrayOf(
-                "http://api.superbin.co.kr/app",
-                "http://api.app.superbin.link",
-                "http://192.168.29.248:30000",
-                "http://192.168.29.185:8120"
+            "http://api.superbin.co.kr/app",
+            "http://api.app.superbin.link",
+            "http://office.aend.co.kr:20002", // 정대리님
+            "http://192.168.29.194:20002"  // 신대리님
+//            "http://192.168.29.248:30000"
         )
 
         val FrontUrls = arrayOf(

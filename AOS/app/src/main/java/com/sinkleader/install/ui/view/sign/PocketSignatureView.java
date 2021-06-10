@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.sinkleader.install.R;
+import com.sinkleader.install.util.Util;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -134,7 +135,6 @@ public class PocketSignatureView extends View {
     }
 
     public void saveVectorImage(String imageFoldePath, String imageName) {
-
         signatureFilePath = imageFoldePath;
         String filename;
 
@@ -158,6 +158,17 @@ public class PocketSignatureView extends View {
         } else {
             Log.v("PocketSignatureView_Log", "No Data to Draw");
         }
+    }
+
+    public String getVectorImageToString() {
+        String result = "";
+
+        if (!vectorStringData.equals("")) {
+            result = createSVGImage(vectorStringData);
+        } else {
+            Log.v("PocketSignatureView_Log", "No Data to Draw");
+        }
+        return result;
     }
 
     private void loadVectoreImage() {
@@ -445,6 +456,28 @@ public class PocketSignatureView extends View {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String createSVGImage(String pathData) {
+        String svgStart = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + screenWidth + "\" height=\"" + screenHeight + "\" version=\"1.1\">\n" + "  <path d=\"";
+        String resultSVG;
+        if(pathData.contains("<svg")){
+            resultSVG = pathData;
+        }
+        else{
+            resultSVG = svgStart + pathData;
+        }
+        if(resultSVG.contains(svgEnd)){
+            resultSVG.replaceAll(svgEnd,"");
+            if(!resultSVG.contains(svgEnd)){
+                resultSVG =resultSVG + svgEnd;
+            }
+        }
+        else {
+            resultSVG =resultSVG + svgEnd;
+        }
+
+        return resultSVG;
     }
 
     private void expandSignatureBoundRect(float historicalX, float historicalY) {

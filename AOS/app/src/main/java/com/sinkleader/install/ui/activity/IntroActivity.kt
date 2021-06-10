@@ -40,8 +40,8 @@ class IntroActivity : BaseActivity() {
 //        getKeyHash(this)
 
         HttpRequestHelper.instance.checkNetworkAvailable(this, true)
-//        requestCheckVersion()
-        startTimer()
+        requestCheckVersion()
+//        startTimer()
         //변경예정
     }
 
@@ -72,15 +72,25 @@ class IntroActivity : BaseActivity() {
 
                 val result: Int = JSONParser.getInt(response!!, "result")
                 if (result == 0) {
-                    val data = JSONParser.getJSONObject(response, "data")
+                    var data = JSONParser.getJSONObject(response, "data")
+                    val list = JSONParser.getJSONArray(data, "list")
 
-                    var isVer = compareVersion(JSONParser.getString(data, "ds_version"))
-                    var msg = JSONParser.getString(data, "ds_message")
+                    for (i in 0..list.length()-1){
+                        var item = list.getJSONObject(i)
+                        val os = JSONParser.getString(item, "os")
+                        if (os.equals("AOS")){
+                            data = item
+                            break
+                        }
+                    }
+
+                    var isVer = compareVersion(JSONParser.getString(data, "version"))
+                    var msg = JSONParser.getString(data, "message")
                     msg = msg.replace("\\n", "\n")
-                    var update_url = JSONParser.getString(data, "ds_url")
+                    var update_url = JSONParser.getString(data, "url")
 
                     //ds_upd_force_yn : Y = 확인버튼 선택시 스토어 이동, C = 버튼2개 팝업 노출, N = 그냥 App 실행
-                    upd_force = JSONParser.getString(data, "ds_upd_force_yn")
+                    upd_force = JSONParser.getString(data, "upd_force_yn")
 
                     if (isVer) {
                         if (upd_force.equals("Y")) {
@@ -95,18 +105,18 @@ class IntroActivity : BaseActivity() {
                             val dialog = ConfirmDialogTwo(
                                 activity,
                                 msg,
-                                "확인",
                                 "취소",
+                                "확인",
                                 object : ConfirmDialogTwo.ConfirmDialogListener {
                                     override fun onConfirm1() {
+                                        startTimer()
+                                    }
+
+                                    override fun onConfirm2() {
                                         val marketLaunch = Intent(Intent.ACTION_VIEW)
                                         marketLaunch.data = Uri.parse(update_url)
                                         startActivity(marketLaunch)
                                         finish()
-                                    }
-
-                                    override fun onConfirm2() {
-                                        startTimer()
                                     }
                                 })
                             dialog.show()

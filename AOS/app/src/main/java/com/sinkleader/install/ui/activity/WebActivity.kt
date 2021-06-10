@@ -13,25 +13,23 @@ import android.provider.Settings
 import android.util.Log
 import android.webkit.*
 import android.widget.Toast
-import com.loopj.android.http.RequestParams
 import com.sinkleader.install.R
-import com.sinkleader.install.network.HttpRequestHelper
 import com.sinkleader.install.network.JSONParser
 import com.sinkleader.install.ui.view.ConfirmDialog
 import com.sinkleader.install.ui.view.ConfirmDialogTwo
+import com.sinkleader.install.ui.view.PhotoDialog
 import com.sinkleader.install.ui.view.WebViewCustom
-import com.sinkleader.install.util.Constant
-import com.sinkleader.install.util.Device
-import com.sinkleader.install.util.PrefMgr
-import com.sinkleader.install.util.Util
+import com.sinkleader.install.util.*
+import droidninja.filepicker.FilePickerBuilder
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class WebActivity : BaseActivity() {
-    val MOVE_LOCATION = 225
+    val ON_CALLBACK = 230
 
     var webView: WebViewCustom? = null
     var activity: BaseActivity? = null
@@ -39,6 +37,8 @@ class WebActivity : BaseActivity() {
     var isLayer = false
 
     var uploadMessage: ValueCallback<Array<Uri?>>? = null //이미지 업로드시 사용
+
+    var mediaManager : MediaManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +49,8 @@ class WebActivity : BaseActivity() {
         if (url == null) url = Util.HOME_URL //홈 주소
         initUI()
         initWebView()
+
+//        url = "http://kkksssyyy.iptime.org:8080"
 
         loadURL(url)
     }
@@ -114,11 +116,16 @@ class WebActivity : BaseActivity() {
             function += "(\'$obj\')"
             callJavascript(function)
             return
-        } else if (requestCode == MOVE_LOCATION) {
+        } else if (requestCode == ON_CALLBACK) {
             if (resultCode == RESULT_OK) {
-                var function = "goLocation"
-                function += "()"
+                val reObj = JSONObject()
+                reObj.put("callbackMethod", data!!.getStringExtra("callback")!!)
+                val jsonstr = data.getStringExtra("data")
+                reObj.put("data", JSONObject(jsonstr))
+                var function = "nativeCallback"
+                function += "(\'$reObj\')"
                 callJavascript(function)
+
             }else if (resultCode == 995){
                 if (webView?.originalUrl!!.contains(Constant.FrontUrls.get(Util.FrontIndex) + "/home")) {
                     var function = "searchFavorites"
@@ -132,8 +139,8 @@ class WebActivity : BaseActivity() {
         if (requestCode == 8080 && resultCode == RESULT_OK) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                val datas = data.data
+                Log.d("data8080", data?.data.toString())
 
-                Log.d("data", data?.data.toString())
 
                 uploadMessage?.onReceiveValue(
                     WebChromeClient.FileChooserParams.parseResult(
@@ -143,6 +150,29 @@ class WebActivity : BaseActivity() {
                 )
             } else {
                 uploadMessage?.onReceiveValue(arrayOf(data?.data))
+            }
+            uploadMessage = null
+        }
+
+        if (requestCode == 233) { //photo
+            if (resultCode == RESULT_OK){
+                val dataList: ArrayList<Uri> = data!!.getParcelableArrayListExtra("SELECTED_PHOTOS")
+                Log.d("dataList", dataList.toString())
+                val list : Array<Uri?> = dataList.toTypedArray()
+                uploadMessage?.onReceiveValue(list)
+            }else{
+                uploadMessage?.onReceiveValue(null)
+            }
+            uploadMessage = null
+        }else if (requestCode == MediaManager.SET_CAMERA){
+            if (resultCode == RESULT_OK){
+                val dataList: ArrayList<Uri> = ArrayList()
+                dataList.add(mediaManager?.url!!)
+                val list : Array<Uri?> = dataList.toTypedArray()
+
+                uploadMessage?.onReceiveValue(list)
+            }else{
+                uploadMessage?.onReceiveValue(null)
             }
             uploadMessage = null
         }
@@ -157,7 +187,7 @@ class WebActivity : BaseActivity() {
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults == null) {
@@ -234,7 +264,7 @@ class WebActivity : BaseActivity() {
             override fun onReceivedError(
                 view: WebView,
                 request: WebResourceRequest,
-                error: WebResourceError
+                error: WebResourceError,
             ) {
                 var code = 0
                 var getUrl = ""
@@ -250,7 +280,7 @@ class WebActivity : BaseActivity() {
             override fun onReceivedHttpError(
                 view: WebView,
                 request: WebResourceRequest,
-                errorResponse: WebResourceResponse
+                errorResponse: WebResourceResponse,
             ) {
                 var code = 0
                 var getUrl = ""
@@ -267,7 +297,7 @@ class WebActivity : BaseActivity() {
             override fun onReceivedSslError(
                 view: WebView,
                 handler: SslErrorHandler,
-                error: SslError
+                error: SslError,
             ) {
             }
 
@@ -275,7 +305,7 @@ class WebActivity : BaseActivity() {
                 view: WebView,
                 errorCode: Int,
                 description: String,
-                failingUrl: String
+                failingUrl: String,
             ) {
                 super.onReceivedError(view, errorCode, description, failingUrl)
             }
@@ -285,29 +315,42 @@ class WebActivity : BaseActivity() {
             override fun onShowFileChooser(
                 webView: WebView?,
                 filePathCallback: ValueCallback<Array<Uri?>>,
-                fileChooserParams: FileChooserParams?
+                fileChooserParams: FileChooserParams?,
             ): Boolean {
-//                uploadMessage = filePathCallback
-                // gallery
-//                FilePickerBuilder.instance
-//                        .setMaxCount(1) //optional
-//                        .setActivityTheme(R.style.LibAppTheme) //optional
-//                        .enableCameraSupport(false)
-//                        .enableVideoPicker(false)
-//                        .enableSelectAll(false)
-//                        .showGifs(true)
-//                        .pickPhoto(activity!!)
+                uploadMessage = filePathCallback
 
-//                val intent = Intent(Intent.ACTION_GET_CONTENT)
-//                intent.addCategory(Intent.CATEGORY_OPENABLE)
-//                intent.type = "image/*"
-//                startActivityForResult(intent, 8080)
+                PhotoDialog(activity, object : PhotoDialog.ConfirmDialogListener{
+                    override fun onPhoto() {
+                        var maxCount = 10
+                        if (webView?.url!!.contains("mypage/profile")){
+                            maxCount = 1
+                        }
+                        FilePickerBuilder.instance
+                            .setMaxCount(maxCount) //optional
+                            .setActivityTheme(R.style.LibAppTheme) //optional
+                            .enableCameraSupport(false)
+                            .enableVideoPicker(false)
+                            .enableSelectAll(false)
+                            .showGifs(true)
+                            .pickPhoto(activity!!)
+                    }
+                    override fun onCamera() {
+                        if (mediaManager == null){
+                            mediaManager = MediaManager(activity)
+                        }
+
+                        mediaManager?.getImageFromCamera()
+                    }
+                    override fun onClose() {
+                        uploadMessage?.onReceiveValue(null)
+                    }
+                }).show()
                 return true
             }
 
             override fun onJsAlert(
                 view: WebView, url: String,
-                message: String, result: JsResult
+                message: String, result: JsResult,
             ): Boolean {
                 val dialog = ConfirmDialog(
                     this@WebActivity,
@@ -326,7 +369,7 @@ class WebActivity : BaseActivity() {
                 view: WebView,
                 url: String,
                 message: String,
-                result: JsResult
+                result: JsResult,
             ): Boolean {
                 val dialog = ConfirmDialogTwo(
                     this@WebActivity,
@@ -397,9 +440,9 @@ class WebActivity : BaseActivity() {
     }
 
     private inner class ActionNativeCall(
-        var method: String,
-        var callback: String,
-        var data: JSONObject
+        method: String,
+        callback: String,
+        data: JSONObject,
     ) {
         init {
             if (method == "openWebView") {
@@ -494,9 +537,25 @@ class WebActivity : BaseActivity() {
             } else if (method == "openBrowser") { //
                 val openURL: String = JSONParser.getString(data, "url")
                 moveWebBrowser(openURL)
-            } else if (method == "Logout") { //
-                requestLogout()
 
+            } else if (method == "openNaverMap") {
+                val address: String = JSONParser.getString(data, "address")
+                openNaverMap(address)
+
+            } else if (method == "openScanner") { //
+                val name: String = JSONParser.getString(data, "name")
+
+                val intent = Intent(activity, QRscenActivity::class.java)
+                intent.putExtra("name", name)
+                intent.putExtra("callback", callback)
+                startActivityForResult(intent, ON_CALLBACK)
+
+            } else if (method == "openSignature") { //
+                val intent = Intent(activity, SignActivity::class.java)
+                intent.putExtra("callback", callback)
+                startActivityForResult(intent, ON_CALLBACK)
+
+            } else if (method == "Logout") { //
                 Util.TOKEN = ""
                 Util.RETOKEN = ""
                 Util.USER_GRADE = ""
@@ -508,6 +567,10 @@ class WebActivity : BaseActivity() {
                 Util.USER_LASTDATE = ""
 
                 PrefMgr.instance.put("token", "")
+
+                val intent = Intent(activity, LoginActivity::class.java)
+                activity?.startActivity(intent)
+                activity?.finish()
 
             } else if (method == "actionShare") {
                 val title: String = JSONParser.getString(data, "title")
@@ -534,7 +597,7 @@ class WebActivity : BaseActivity() {
         }
     }
 
-    private fun openNaverMap(str : String){
+    private fun openNaverMap(str: String){
 //        val str = URLEncoder.encode( "서울특별시 강남구 선릉로647 4층 에이엔",  "utf8")
 
         val url = "nmap://search?query="+ str +"&appname=com.sinkleader.install"
@@ -552,28 +615,6 @@ class WebActivity : BaseActivity() {
         } else {
             startActivity(intent)
         }
-    }
-
-    private fun requestLogout() {
-        val param = RequestParams()
-
-        val url = Constant.Serverlist[Util.ServerIndex] + "/auth/logout"
-        val httpReqHelper: HttpRequestHelper = HttpRequestHelper.instance!!
-        httpReqHelper.init(this, this, object : HttpRequestHelper.OnParseResponseListener {
-            override fun onSuccessResponse(apiName: String?, response: JSONObject?) {
-                Log.d("requestLogout Success", apiName)
-                val result: Int = JSONParser.getInt(response!!, "result")
-
-                val intent = Intent(activity, LoginActivity::class.java)
-                activity?.startActivity(intent)
-                activity?.finish()
-            }
-
-            override fun onError(code: Int, msg: String?) {
-                Log.d("requestLogout Err", "$code : $msg")
-            }
-        }, "requestLogout", false)
-        httpReqHelper.deleteRequest(this, url, param)
     }
 
     private fun loadURL(url: String) {
