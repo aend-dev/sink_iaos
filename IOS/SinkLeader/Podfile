@@ -11,9 +11,8 @@ target 'SinkLeader (iOS)' do
   pod 'Toast-Swift'               #, '~> 4.0.0'
   pod 'SwiftKeychainWrapper'
   
-  pod 'Firebase/Core'    #, '~> 5.1.7'
-  pod 'Firebase/Messaging'  #, '~> 3.2.1'
-  pod 'Firebase/Auth'
+  pod 'Firebase/Analytics'    , '~> 7.1.0'
+  pod 'Firebase/Messaging'  , '~> 7.1.0'
   
   pod 'SVGKit'
 #  pod 'SDWebImageSVGKitPlugin'

@@ -14,6 +14,7 @@ class IntroVC: BaseVC {
     var mTimer : Timer?
     var mTimeNum : Int = 0
     
+    var mUrl = ""
     var reviewURL : URL!
     
     override func viewDidLoad() {
@@ -47,7 +48,12 @@ class IntroVC: BaseVC {
     
     func openWebview(){
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "WEB_VC") as! WebVC
-        vc.mUrl = FrontList[Net.FrontIndex] + "/home"
+        if mUrl.count == 0 {
+            vc.mUrl = FrontList[Net.FrontIndex] + "/home"
+        }else{
+            vc.mUrl = mUrl
+        }
+        
         self.present(vc, animated: true)
     }
 }

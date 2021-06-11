@@ -23,10 +23,9 @@ class BaseVC: UIViewController {
     }
     
     func gotoIntro(url: String){
-//        m_appDelegate.enterURL = ""
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "WEB_VC") as! WebVC
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "INTRO_VC") as! IntroVC
         vc.mUrl = url
-        self.present(vc, animated: true)
+        self.present(vc, animated: false)
     }
     
     @objc public func onTopBack(_ sender: UIButton) {
