@@ -143,6 +143,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         if (url != null && URLUtil.isValidUrl(url)){
             intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        }else{
+            intent.putExtra("WEB_URL", url);
         }
 
         return intent;

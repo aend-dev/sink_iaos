@@ -626,9 +626,8 @@ open class Util : Constant {
 
             var web_url = Constant.FrontUrls[FrontIndex] + "/home"
             if (!url?.equals("")){
-                web_url = url
+                web_url += "?$url"
             }
-
             val intent = Intent(activity, WebActivity::class.java)
             intent.putExtra("WEB_URL", web_url)
             intent.putExtra("bck", true)

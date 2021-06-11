@@ -8,11 +8,15 @@
 
         <domain includeSubdomains="true">kkksssyyy.iptime.org</domain>
 
+        <domain includeSubdomains="true">postcode.map.daum.net</domain>
+        <domain includeSubdomains="true">stlog1-local.kakao.com</domain>
+        <domain includeSubdomains="true">sink-api.dev.aend.co.kr</domain>
+        <domain includeSubdomains="true">suggest-bar.daum.net</domain>
+
         <domain includeSubdomains="true">dapi.kakao.com</domain>
         <domain includeSubdomains="true">t1.daumcdn.net</domain>
         <domain includeSubdomains="true">s1.daumcdn.net</domain>
         <domain includeSubdomains="true">i1.daumcdn.net</domain>
-
         <domain includeSubdomains="true">map0.daumcdn.net</domain>
         <domain includeSubdomains="true">map1.daumcdn.net</domain>
         <domain includeSubdomains="true">map2.daumcdn.net</domain>
