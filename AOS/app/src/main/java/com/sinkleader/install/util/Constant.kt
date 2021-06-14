@@ -6,17 +6,18 @@ interface Constant {
     companion object {
         val Serverlist = arrayOf(
             "http://api.superbin.co.kr/app",
-            "http://api.app.superbin.link",
+            "http://sink-api.dev.aend.co.kr", //개발
             "http://office.aend.co.kr:20002", // 정대리님
-            "http://192.168.29.194:20002"  // 신대리님
-//            "http://192.168.29.248:30000"
+            "http://192.168.29.194:20002",  // 신대리님
+            "http://192.168.29.248:30000"   // 상현주임님
         )
 
         val FrontUrls = arrayOf(
                 "http://app.superbin.co.kr",
-                "http://app.superbin.link",
+                "http://sink-front.dev.aend.co.kr",
                 "http://office.aend.co.kr:20022",
-                "http://192.168.29.194:20022"
+                "http://192.168.29.194:20022",
+                "http://office.aend.co.kr:20022"
         )
 
         const val SDCARD_FOLDER = "SinkLeader_Install"

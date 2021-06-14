@@ -180,17 +180,19 @@ class LoginActivity : BaseActivity() {
         if (BuildConfig.BUILD_TYPE == "debug") {
             if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
                 if (Util.FrontIndex < Constant.FrontUrls.size - 1) {
+                    Util.ServerIndex += 1
                     Util.FrontIndex += 1
                     Toast.makeText(
                         this,
-                        "Server 변경 : " + Constant.Serverlist.get(Util.FrontIndex),
+                        "Server 변경 : " + Constant.Serverlist.get(Util.ServerIndex),
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
+                    Util.ServerIndex = 0
                     Util.FrontIndex = 0
                     Toast.makeText(
                         this,
-                        "Server 변경 : " + Constant.Serverlist.get(Util.FrontIndex),
+                        "Server 변경 : " + Constant.Serverlist.get(Util.ServerIndex),
                         Toast.LENGTH_SHORT
                     ).show()
                 }

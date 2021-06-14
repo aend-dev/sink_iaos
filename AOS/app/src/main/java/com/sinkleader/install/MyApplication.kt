@@ -23,8 +23,8 @@ class MyApplication : MultiDexApplication() {
             Util.ServerIndex = 0
             Util.FrontIndex = 0
         }else{
-            Util.ServerIndex = 2
-            Util.FrontIndex = 2
+            Util.ServerIndex = 4
+            Util.FrontIndex = 4
         }
     }
 
