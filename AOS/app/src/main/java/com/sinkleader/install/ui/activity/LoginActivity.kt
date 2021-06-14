@@ -196,6 +196,7 @@ class LoginActivity : BaseActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+                PrefMgr.instance.put("Util.ServerIndex", Util.ServerIndex)
                 Util.changeServer()
                 return true
             }

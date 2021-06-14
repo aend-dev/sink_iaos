@@ -4,6 +4,7 @@ import androidx.multidex.MultiDexApplication
 import com.sinkleader.install.util.Util
 import com.sinkleader.install.fcm.FcmLibrary
 import com.sinkleader.install.network.HttpRequestHelper
+import com.sinkleader.install.util.PrefMgr
 
 class MyApplication : MultiDexApplication() {
     override fun onCreate() {
@@ -23,8 +24,10 @@ class MyApplication : MultiDexApplication() {
             Util.ServerIndex = 0
             Util.FrontIndex = 0
         }else{
-            Util.ServerIndex = 4
-            Util.FrontIndex = 4
+            val index = PrefMgr.instance.getInt("Util.ServerIndex", 1)
+
+            Util.ServerIndex = index
+            Util.FrontIndex = index
         }
     }
 
