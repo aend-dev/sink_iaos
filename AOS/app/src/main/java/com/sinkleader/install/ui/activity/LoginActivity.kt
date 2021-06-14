@@ -29,6 +29,8 @@ class LoginActivity : BaseActivity() {
     var checkID : CheckBox? = null
     var checkAuto : CheckBox? = null
 
+    var activity : LoginActivity = this
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -54,6 +56,28 @@ class LoginActivity : BaseActivity() {
         if (grantResults == null) {
             Toast.makeText(this, "$requestCode 권한 결과 값을 받아오지 못하였습니다.", Toast.LENGTH_LONG).show()
             return
+        }else{
+            Log.d("grantResults", grantResults.toString())
+            var result = false
+
+            for (i in grantResults){
+                if (i == -1){
+                    result = true
+                }
+            }
+
+            if (result){
+                if (isPermisionsRevoked(permissions)){
+                    ConfirmDialog(this, "모든 권한을 허용 하셔야 합니다.", "확인", object :ConfirmDialog.ConfirmDialogListener{
+                        override fun onConfirm1() {
+                            gotoSetting(activity, 10)
+                            finish()
+                        }
+                    }).show()
+                }
+
+
+            }
         }
     }
 
@@ -196,7 +220,7 @@ class LoginActivity : BaseActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                PrefMgr.instance.put("Util.ServerIndex", Util.ServerIndex)
+                PrefMgr.instance.put("ServerIndex", "${Util.ServerIndex}")
                 Util.changeServer()
                 return true
             }

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import com.sinkleader.install.BuildConfig
 import com.sinkleader.install.R
 import com.sinkleader.install.network.HttpRequestHelper
 import com.sinkleader.install.network.JSONParser
@@ -182,6 +183,21 @@ class IntroActivity : BaseActivity() {
 
     private fun requestAutoLogin() { //LOGIN_URL
         val obj = JSONObject()
+
+        val release = BuildConfig.BUILD_TYPE
+
+        Log.d("ServerIndex", "requestAutoLogin : " + Util.ServerIndex)
+
+        if(release.equals("release")){
+            Util.ServerIndex = 0
+            Util.FrontIndex = 0
+        }else{
+            val index = PrefMgr.instance.getString("ServerIndex", "2")
+            val s = Integer.parseInt(index!!)
+            Log.d("ServerIndex", "requestAutoLogin : " + index.toString())
+            Util.ServerIndex = s
+            Util.FrontIndex = s
+        }
 
         obj.put("userDevice", Device.getInfo(this))
         obj.put("x_token", Util.TOKEN)

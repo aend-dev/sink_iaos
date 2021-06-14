@@ -96,7 +96,9 @@ open class Util : Constant {
         }
 
         fun changeServer() {
-            PrefMgr.instance.put("ServerIndex", ServerIndex)
+            Log.d("changeServer", "ServerIndex : $ServerIndex")
+
+//            PrefMgr.instance.put("ServerIndex", ServerIndex)
             SERVER_URL = Constant.Serverlist.get(ServerIndex)
             HOME_URL = Constant.FrontUrls.get(FrontIndex)
 //            PUSH_RECEIVE_URL = Constant.FrontUrls.get(FrontIndex) + "/common/push/receive"

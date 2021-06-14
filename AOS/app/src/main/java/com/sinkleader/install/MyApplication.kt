@@ -1,5 +1,6 @@
 package com.sinkleader.install
 
+import android.util.Log
 import androidx.multidex.MultiDexApplication
 import com.sinkleader.install.util.Util
 import com.sinkleader.install.fcm.FcmLibrary
@@ -24,10 +25,11 @@ class MyApplication : MultiDexApplication() {
             Util.ServerIndex = 0
             Util.FrontIndex = 0
         }else{
-            val index = PrefMgr.instance.getInt("Util.ServerIndex", 1)
-
-            Util.ServerIndex = index
-            Util.FrontIndex = index
+            val index = PrefMgr.instance.getString("ServerIndex", "1")
+            val s = Integer.parseInt(index!!)
+            Log.d("ServerIndex", index.toString())
+            Util.ServerIndex = s
+            Util.FrontIndex = s
         }
     }
 

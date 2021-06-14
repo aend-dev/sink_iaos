@@ -5,9 +5,11 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
@@ -108,7 +110,7 @@ open class BaseActivity : AppCompatActivity(), Constant {
         return true
     }
 
-    fun isPermisionsRevoked(permissions: Array<String?>): Boolean {
+    fun isPermisionsRevoked(permissions: Array<String>): Boolean {
         var isRevoked = false
         for (permission in permissions) {
             if (ContextCompat.checkSelfPermission(this, permission!!) == PackageManager.PERMISSION_DENIED &&
@@ -120,12 +122,20 @@ open class BaseActivity : AppCompatActivity(), Constant {
         return isRevoked
     }
 
+    open fun gotoSetting(activity: Activity, request: Int) {
+        val intent = Intent()
+        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+        val uri = Uri.fromParts("package", activity.packageName, null)
+        intent.data = uri
+        activity.startActivityForResult(intent, request)
+    }
+
     fun requestPermission(
         p_context: Activity?,
         p_requiredPermissions: Array<String>,
-        requestCode: Int
+        requestCode: Int,
     ) {
-        ActivityCompat.requestPermissions(p_context!!, p_requiredPermissions!!, requestCode)
+        ActivityCompat.requestPermissions(p_context!!, p_requiredPermissions, requestCode)
     }
 
     fun isNotificationChannelEnabled(channelId: String): Boolean {
