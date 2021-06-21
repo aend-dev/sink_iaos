@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.Point
 import android.graphics.Typeface
 import android.media.MediaScannerConnection
@@ -86,7 +87,12 @@ open class Util : Constant {
         fun getRealPath(contentUri: Uri): String? {
             var res: String? = null
             val proj = arrayOf(MediaStore.Images.Media.DATA)
-            val cursor: Cursor = MyApplication.globalApplicationContext?.contentResolver?.query(contentUri, proj, null, null, null)!!
+            val cursor: Cursor = MyApplication.globalApplicationContext?.contentResolver?.query(
+                contentUri,
+                proj,
+                null,
+                null,
+                null)!!
             if (cursor.moveToFirst()) {
                 val column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                 res = cursor.getString(column_index)
@@ -144,13 +150,13 @@ open class Util : Constant {
         // Convert dip to pixel
         fun getDipToPx(context: Context, dip: Int): Int {
             return TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, dip.toFloat(), context.resources.displayMetrics).toInt()
+                TypedValue.COMPLEX_UNIT_DIP, dip.toFloat(), context.resources.displayMetrics).toInt()
         }
 
         // Convert sp to pixel
         fun getSpToPx(context: Context, dip: Int): Int {
             return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
-                    dip.toFloat(), context.resources.displayMetrics).toInt()
+                dip.toFloat(), context.resources.displayMetrics).toInt()
         }
 
         fun getDisplaySize(activity: Activity): Point {
@@ -161,8 +167,10 @@ open class Util : Constant {
         }
 
         // 텍스트에 각이한 스타일 지정하기
-        fun setTextStyle(szTxt: String?, nStyle: Int,
-                         nColor: Int, nSize: Int): SpannableStringBuilder {
+        fun setTextStyle(
+            szTxt: String?, nStyle: Int,
+            nColor: Int, nSize: Int,
+        ): SpannableStringBuilder {
             val ssb = SpannableStringBuilder()
             ssb.clear()
             if (szTxt == null || szTxt == "") {
@@ -171,11 +179,11 @@ open class Util : Constant {
             ssb.append(szTxt) // 주의 : 본문에 "."이 들어가면 행바꾸기됩니다.
             try {
                 ssb.setSpan(StyleSpan(nStyle), 0, szTxt.length,
-                        Spannable.SPAN_COMPOSING) // nStyle : Typeface.BOLD_ITALIC
+                    Spannable.SPAN_COMPOSING) // nStyle : Typeface.BOLD_ITALIC
                 ssb.setSpan(ForegroundColorSpan(nColor), 0, szTxt.length,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 ssb.setSpan(AbsoluteSizeSpan(nSize), 0, szTxt.length,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             } catch (e: Exception) {
                 Log.d("Util", "setTextStyle() -->  " + e.message)
             }
@@ -212,7 +220,7 @@ open class Util : Constant {
         @JvmOverloads
         fun showToast(context: Context, msg: String?, isLong: Boolean = false) {
             val toast = Toast.makeText(context.applicationContext,
-                    msg, if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT)
+                msg, if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT)
             toast.show()
             val handler = Handler()
             handler.postDelayed({ toast.cancel() }, TOAST_LELNGTH.toLong())
@@ -221,7 +229,7 @@ open class Util : Constant {
         @JvmOverloads
         fun showToast(context: Context, resId: Int, isLong: Boolean = false) {
             val toast = Toast.makeText(context.applicationContext,
-                    context.getString(resId), if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT)
+                context.getString(resId), if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT)
             toast.show()
             val handler = Handler()
             handler.postDelayed({ toast.cancel() }, TOAST_LELNGTH.toLong())
@@ -260,11 +268,13 @@ open class Util : Constant {
          * Delete all photo in sd card
          */
         fun deletePhotoOfSDCard(context: Context) {
-            val rootDir = File(Environment.getExternalStorageDirectory().toString() + File.separator + Constant.Companion.SDCARD_FOLDER)
+            val rootDir = File(Environment.getExternalStorageDirectory()
+                .toString() + File.separator + Constant.Companion.SDCARD_FOLDER)
             if (rootDir.exists()) {
                 try {
                     val list = rootDir.list()
-                    deleteDir(Environment.getExternalStorageDirectory().toString() + File.separator + Constant.Companion.SDCARD_FOLDER)
+                    deleteDir(Environment.getExternalStorageDirectory()
+                        .toString() + File.separator + Constant.Companion.SDCARD_FOLDER)
                     galleryAddPic(context, list)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -279,7 +289,8 @@ open class Util : Constant {
             val rootDir: File
             val dir: Array<String>
             if (files == null) {
-                rootDir = File(Environment.getExternalStorageDirectory().toString() + File.separator + Constant.Companion.SDCARD_FOLDER)
+                rootDir = File(Environment.getExternalStorageDirectory()
+                    .toString() + File.separator + Constant.Companion.SDCARD_FOLDER)
                 if (rootDir.exists() == false) {
                     rootDir.mkdir()
                 }
@@ -291,7 +302,8 @@ open class Util : Constant {
             try {
                 for (i in dir.indices) {
                     val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-                    val f = File(Environment.getExternalStorageDirectory().toString() + File.separator + Constant.Companion.SDCARD_FOLDER + "/" + dir[i])
+                    val f = File(Environment.getExternalStorageDirectory()
+                        .toString() + File.separator + Constant.Companion.SDCARD_FOLDER + "/" + dir[i])
                     val contentUri = Uri.fromFile(f)
                     mediaScanIntent.data = contentUri
                     context.sendBroadcast(mediaScanIntent)
@@ -319,18 +331,39 @@ open class Util : Constant {
 
         fun createRootDir() {
             var folder = File(Environment.getExternalStorageDirectory()
-                    .toString() + "/" + Constant.Companion.SDCARD_FOLDER)
+                .toString() + "/" + Constant.Companion.SDCARD_FOLDER)
             folder.mkdirs()
             folder = File(Environment.getExternalStorageDirectory()
-                    .toString() + "/" + Constant.Companion.TMP_FOLDER)
+                .toString() + "/" + Constant.Companion.TMP_FOLDER)
             folder.mkdirs()
         }
 
         fun cropBitmap(bitmap: Bitmap?, rect: Point, location: Point): Bitmap {
             return Bitmap.createBitmap(bitmap!!, location.x //X 시작위치 (원본의 4/1지점)
-                    , location.y //Y 시작위치 (원본의 4/1지점)
-                    , rect.x // 넓이 (원본의 절반 크기)
-                    , rect.y)
+                , location.y //Y 시작위치 (원본의 4/1지점)
+                , rect.x // 넓이 (원본의 절반 크기)
+                , rect.y)
+        }
+
+        fun getResizedBitmap(bm: Bitmap, isWidth: Boolean): Bitmap? {
+            // isWidth 가로가 길면 true
+            val width = bm.width
+            val height = bm.height
+            val scale: Float
+            scale = if (isWidth) {
+                1280.toFloat() / width
+            } else {
+                1280.toFloat() / height
+            }
+
+            // CREATE A MATRIX FOR THE MANIPULATION
+            val matrix = Matrix()
+            // RESIZE THE BIT MAP
+            matrix.postScale(scale, scale)
+
+            // "RECREATE" THE NEW BITMAP
+            return Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false)
         }
 
         /**
@@ -361,7 +394,8 @@ open class Util : Constant {
             tmDevice = "" + tm.deviceId
             //tmSerial = "" + tm.getSimSerialNumber();
             //androidId = "" + android.provider.Settings.Secure.getString(context.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-            val deviceUuid = UUID(tmDevice.hashCode().toLong(), tmDevice.hashCode().toLong() shl 32 or tmDevice.hashCode().toLong())
+            val deviceUuid = UUID(tmDevice.hashCode().toLong(),
+                tmDevice.hashCode().toLong() shl 32 or tmDevice.hashCode().toLong())
             deviceId = deviceUuid.toString()
             return deviceId
         }
@@ -402,7 +436,7 @@ open class Util : Constant {
 
         fun goToAppSettings(activity: Activity) {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                    Uri.fromParts("package", activity.packageName, null))
+                Uri.fromParts("package", activity.packageName, null))
             activity.startActivity(intent)
         }
 
@@ -429,8 +463,10 @@ open class Util : Constant {
         /**
          * bitmap 를 jpeg 파일로 저장; 출처 : http://snowbora.com/418
          */
-        fun saveBitmapToFileCache(bitmap: Bitmap?,
-                                  strFilePath: String?, bPNG: Boolean): Boolean {
+        fun saveBitmapToFileCache(
+            bitmap: Bitmap?,
+            strFilePath: String?, bPNG: Boolean,
+        ): Boolean {
             if (bitmap == null) {
                 return false
             }
@@ -538,15 +574,21 @@ open class Util : Constant {
             return simpleDateFormat.format(date)
         }
 
-        fun showLocalFileImageByThumbnail(context: Context?, cr: ContentResolver?, view: ImageView?, url: String?, image_id: Long) {
+        fun showLocalFileImageByThumbnail(
+            context: Context?,
+            cr: ContentResolver?,
+            view: ImageView?,
+            url: String?,
+            image_id: Long
+        ) {
             if (view == null) return
             if (url == null || url.isEmpty()) {
                 view.setImageResource(0)
             } else {
                 val bitmap = MediaStore.Images.Thumbnails.getThumbnail(
-                        cr, image_id,
-                        MediaStore.Images.Thumbnails.MINI_KIND,
-                        null)
+                    cr, image_id,
+                    MediaStore.Images.Thumbnails.MINI_KIND,
+                    null)
                 view.setImageBitmap(bitmap)
             }
         }
@@ -613,7 +655,7 @@ open class Util : Constant {
             }
         }
 
-        fun moveWebPage(activity:Activity, user:JSONObject, url:String) {
+        fun moveWebPage(activity: Activity, user: JSONObject, url: String) {
             TOKEN = JSONParser.getString(user, "token")
             RETOKEN = JSONParser.getString(user, "refresh_token")
             USER_GRADE = JSONParser.getString(user, "app_user_grade")

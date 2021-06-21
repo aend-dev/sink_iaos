@@ -7,15 +7,14 @@
 
     <LinearLayout
         android:id="@+id/back_scanpop"
-        android:layout_above="@+id/pop_layout_scan"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#38000000"
+        android:background="#44000000"
         android:orientation="horizontal" />
 
     <RelativeLayout
         android:background="@color/onlyWhite"
-        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
         android:id="@+id/pop_layout_scan"
         android:layout_width="match_parent"
         android:layout_height="340dp">
@@ -75,7 +74,8 @@
                     android:padding="8dp"
                     android:id="@+id/edit_qrscan"
                     android:hint="시리얼 넘버를 입력하세요."
-                    android:inputType="number"
+                    android:inputType="text"
+                    android:fontFamily="@font/notosans_regular"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/xml_edit_box"/>

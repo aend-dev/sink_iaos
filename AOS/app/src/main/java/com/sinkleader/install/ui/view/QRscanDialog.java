@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sinkleader.install.R;
@@ -26,6 +27,8 @@ public class QRscanDialog extends BaseDialog {
     Button preButton;
     Button enterButton;
 
+    RelativeLayout layout;
+
     private ConfirmDialogListener m_listener;
 
     public QRscanDialog(Context context, CharSequence content, ConfirmDialogListener listener) {
@@ -40,6 +43,9 @@ public class QRscanDialog extends BaseDialog {
         backgrond.setOnClickListener(v->{
             dismiss();
         });
+
+        layout = findViewById(R.id.pop_layout_scan);
+        layout.setOnClickListener(v -> {});
 
         tv_content = findViewById(R.id.txt_popup_qrscan);
         tv_content.setText(content);
