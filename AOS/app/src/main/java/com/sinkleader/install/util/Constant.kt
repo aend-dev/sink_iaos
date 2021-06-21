@@ -5,7 +5,7 @@ import android.Manifest
 interface Constant {
     companion object {
         val Serverlist = arrayOf(
-            "http://api.superbin.co.kr/app",
+            "http://api.sinkleader.com",
             "http://sink-api.dev.aend.co.kr", //개발
             "http://office.aend.co.kr:20002", // 정대리님
             "http://192.168.29.194:20002",  // 신대리님
@@ -13,8 +13,8 @@ interface Constant {
         )
 
         val FrontUrls = arrayOf(
-                "http://app.superbin.co.kr",
-                "http://sink-front.dev.aend.co.kr",
+                "http://front.sinkleader.com",
+                "http://sink-front.dev.aend.co.kr:20002",
                 "http://office.aend.co.kr:20022",
                 "http://192.168.29.194:20022",
                 "http://office.aend.co.kr:20022"
