@@ -79,4 +79,12 @@ object JSONParser {
             json.getDouble(paramName).toFloat()
         }
     }
+
+    @Throws(JSONException::class)
+    fun getBoolean(json: JSONObject, paramName: String): Boolean {
+        if (!json.has(paramName)) {
+            return false
+        }
+        return json.getBoolean(paramName)
+    }
 }

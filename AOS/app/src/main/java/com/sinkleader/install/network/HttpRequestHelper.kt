@@ -176,138 +176,68 @@ class HttpRequestHelper{
     fun postRequest(url: String?, params: RequestParams?) {
         checkNetworkAvailable(m_context, false)
 
-        if (m_isNetwork){
-            setCommonHeader()
-            m_requestHandle = m_asyncHttpClient.post(url, params, responseHandler)
-        }else{
-            m_Activity?.runOnUiThread {
-                val dialog = ConfirmDialog(
-                    m_context,
-                    m_context?.resources?.getString(R.string.network_err),
-                    "확인", {})
-                dialog.show()
-            }
-        }
+        setCommonHeader()
+        m_requestHandle = m_asyncHttpClient.post(url, params, responseHandler)
     }
 
     fun getJsonRequest(context: Context?, url: String?, entity: StringEntity?) {
         checkNetworkAvailable(m_context, false)
 
-        if (m_isNetwork) {
-            setCommonHeader()
-            m_requestHandle = m_asyncHttpClient.get(
-                context,
-                url,
-                entity,
-                "application/json;charset=UTF-8",
-                responseHandler
-            )
-        }else{
-            m_Activity?.runOnUiThread {
-                val dialog = ConfirmDialog(
-                    m_context,
-                    m_context?.resources?.getString(R.string.network_err),
-                    "확인", {})
-                dialog.show()
-            }
-        }
+        setCommonHeader()
+        m_requestHandle = m_asyncHttpClient.get(
+            context,
+            url,
+            entity,
+            "application/json;charset=UTF-8",
+            responseHandler
+        )
     }
 
     fun postJsonRequest(context: Context?, url: String?, entity: StringEntity?) {
         checkNetworkAvailable(m_context, false)
 
-        if (m_isNetwork) {
-            setCommonHeader()
-            m_requestHandle = m_asyncHttpClient.post(
-                context,
-                url,
-                entity,
-                "application/json;charset=UTF-8",
-                responseHandler
-            )
-        }else{
-            m_Activity?.runOnUiThread {
-                val dialog = ConfirmDialog(
-                    m_context,
-                    m_context?.resources?.getString(R.string.network_err),
-                    "확인", {})
-                dialog.show()
-            }
-        }
+        setCommonHeader()
+        m_requestHandle = m_asyncHttpClient.post(
+            context,
+            url,
+            entity,
+            "application/json;charset=UTF-8",
+            responseHandler
+        )
     }
 
     fun putJsonRequest(context: Context?, url: String?, entity: StringEntity?) {
         checkNetworkAvailable(m_context, false)
 
-        if (m_isNetwork) {
-            setCommonHeader()
-            m_requestHandle = m_asyncHttpClient.put(
-                context,
-                url,
-                entity,
-                "application/json;charset=UTF-8",
-                responseHandler
-            )
-        }else{
-            m_Activity?.runOnUiThread {
-                val dialog = ConfirmDialog(
-                    m_context,
-                    m_context?.resources?.getString(R.string.network_err),
-                    "확인", {})
-                dialog.show()
-            }
-        }
+        setCommonHeader()
+        m_requestHandle = m_asyncHttpClient.put(
+            context,
+            url,
+            entity,
+            "application/json;charset=UTF-8",
+            responseHandler
+        )
     }
 
     fun putRequest(url: String?, params: RequestParams?) {
         checkNetworkAvailable(m_context, false)
 
-        if (m_isNetwork) {
-            setCommonHeader()
-            m_requestHandle = m_asyncHttpClient.put(url, params, responseHandler)
-        }else{
-            m_Activity?.runOnUiThread {
-                val dialog = ConfirmDialog(
-                    m_context,
-                    m_context?.resources?.getString(R.string.network_err),
-                    "확인", {})
-                dialog.show()
-            }
-        }
+        setCommonHeader()
+        m_requestHandle = m_asyncHttpClient.put(url, params, responseHandler)
     }
 
     fun getRequest(url: String?, params: RequestParams?) {
         checkNetworkAvailable(m_context, false)
 
-        if (m_isNetwork) {
-            setCommonHeader()
-            m_requestHandle = m_asyncHttpClient[url, params, responseHandler]
-        }else{
-            m_Activity?.runOnUiThread {
-                val dialog = ConfirmDialog(
-                    m_context,
-                    m_context?.resources?.getString(R.string.network_err),
-                    "확인", {})
-                dialog.show()
-            }
-        }
+        setCommonHeader()
+        m_requestHandle = m_asyncHttpClient[url, params, responseHandler]
     }
 
     fun deleteRequest(context: Context?, url: String, params: RequestParams) {
         checkNetworkAvailable(m_context, false)
 
-        if (m_isNetwork) {
-            setCommonHeader()
-            m_requestHandle = m_asyncHttpClient.delete(context, url, null, params, responseHandler)
-        }else{
-            m_Activity?.runOnUiThread {
-                val dialog = ConfirmDialog(
-                    m_context,
-                    m_context?.resources?.getString(R.string.network_err),
-                    "확인", {})
-                dialog.show()
-            }
-        }
+        setCommonHeader()
+        m_requestHandle = m_asyncHttpClient.delete(context, url, null, params, responseHandler)
     }
 
     fun getSyncRequest(url: String?, params: RequestParams?) {
