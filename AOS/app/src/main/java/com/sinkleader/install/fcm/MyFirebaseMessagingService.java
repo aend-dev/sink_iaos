@@ -19,6 +19,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.sinkleader.install.R;
 import com.sinkleader.install.network.JSONParser;
 import com.sinkleader.install.ui.activity.IntroActivity;
+import com.sinkleader.install.ui.activity.WebActivity;
 
 import org.json.JSONObject;
 
@@ -44,7 +45,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             int id = seq; // Integer.parseInt(JSONParser.getString(jsonObject, "noti_seq"));
 
             seq += 1;
-            if (seq == 100){
+            if (seq == 1000){
                 seq = 0;
             }
 
@@ -61,7 +62,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent = settingIntent(url);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -144,6 +145,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (url != null && URLUtil.isValidUrl(url)){
             intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         }else{
+            boolean isApp= checkRunningApp();
+
+            if (isApp){
+                intent = new Intent(this, WebActivity.class);
+                intent.putExtra("bck", true);
+            }
+
             intent.putExtra("WEB_URL", url);
         }
 
