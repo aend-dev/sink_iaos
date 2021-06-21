@@ -6,8 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.sinkleader.install.ui.view.WebViewCustom
-        android:id="@+id/webview_web"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_web"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+        <com.sinkleader.install.ui.view.WebViewCustom
+            android:id="@+id/webview_web"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </RelativeLayout>

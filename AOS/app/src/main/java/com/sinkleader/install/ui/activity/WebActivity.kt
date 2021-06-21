@@ -13,6 +13,7 @@ import android.provider.Settings
 import android.util.Log
 import android.webkit.*
 import android.widget.Toast
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sinkleader.install.R
 import com.sinkleader.install.network.JSONParser
 import com.sinkleader.install.ui.view.ConfirmDialog
@@ -24,6 +25,7 @@ import droidninja.filepicker.FilePickerBuilder
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
+import java.net.URLDecoder
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -31,9 +33,11 @@ import kotlin.collections.ArrayList
 class WebActivity : BaseActivity() {
     val ON_CALLBACK = 230
 
+    var refreshLayout : SwipeRefreshLayout? =  null
     var webView: WebViewCustom? = null
     var activity: BaseActivity? = null
     var isBack = false
+    var isLoad = false
     var isLayer = false
 
     var uploadMessage: ValueCallback<Array<Uri?>>? = null //이미지 업로드시 사용
@@ -45,6 +49,10 @@ class WebActivity : BaseActivity() {
         setContentView(R.layout.activity_web)
 
         var url = intent.getStringExtra("WEB_URL")
+
+        if (!url.startsWith("http")){
+            url = Constant.FrontUrls.get(Util.FrontIndex) + "/home?" + url
+        }
 
         if (url == null) url = Util.HOME_URL //홈 주소
         initUI()
@@ -80,6 +88,11 @@ class WebActivity : BaseActivity() {
             if (item.url == Util.SIGNUP_URL) {
             }
             webView!!.goBack()
+            return
+        }else if(!webView!!.url.equals(Constant.FrontUrls.get(Util.FrontIndex)+ "/home")){
+            loadURL(Constant.FrontUrls.get(Util.FrontIndex)+ "/home")
+            webView?.clearHistory()
+
             return
         }
         super.onBackPressed()
@@ -166,15 +179,22 @@ class WebActivity : BaseActivity() {
             uploadMessage = null
         }else if (requestCode == MediaManager.SET_CAMERA){
             if (resultCode == RESULT_OK){
-                val dataList: ArrayList<Uri> = ArrayList()
-                dataList.add(mediaManager?.url!!)
-                val list : Array<Uri?> = dataList.toTypedArray()
-
-                uploadMessage?.onReceiveValue(list)
+                var maxCount = 10
+                if (webView?.url!!.contains("mypage/profile")){
+                    maxCount = 1
+                }
+                FilePickerBuilder.instance
+                    .setMaxCount(maxCount) //optional
+                    .setActivityTheme(R.style.LibAppTheme) //optional
+                    .enableCameraSupport(false)
+                    .enableVideoPicker(false)
+                    .enableSelectAll(false)
+                    .showGifs(true)
+                    .pickPhoto(activity!!)
             }else{
                 uploadMessage?.onReceiveValue(null)
+                uploadMessage = null
             }
-            uploadMessage = null
         }
 
     }
@@ -231,6 +251,23 @@ class WebActivity : BaseActivity() {
         val back = intent.getBooleanExtra("bck", false)
 
         setFinishAppWhenPressedBackKey(back)
+
+        refreshLayout = findViewById(R.id.refresh_web)
+        refreshLayout?.setOnRefreshListener {
+            if (isLoad){
+//                webView?.reload()
+                val ret = JSONObject()
+                ret.put("callbackMethod", "callbackIsReload")
+                ret.put("data", JSONObject())
+                var function = "nativeCallback"
+                function += "(\'$ret\')"
+
+                callJavascript(function)
+            }
+            refreshLayout?.isRefreshing = false
+        }
+        refreshLayout?.isEnabled = false
+        refreshLayout?.isActivated = false
     }
 
     private fun initWebView() {
@@ -259,7 +296,6 @@ class WebActivity : BaseActivity() {
                     webView?.clearHistory()
                 }
             }
-
 
             override fun onReceivedError(
                 view: WebView,
@@ -335,11 +371,8 @@ class WebActivity : BaseActivity() {
                             .pickPhoto(activity!!)
                     }
                     override fun onCamera() {
-                        if (mediaManager == null){
-                            mediaManager = MediaManager(activity)
-                        }
-
-                        mediaManager?.getImageFromCamera()
+                        val intent = Intent(activity, CameraActivity::class.java)
+                        activity?.startActivityForResult(intent, MediaManager.SET_CAMERA)
                     }
                     override fun onClose() {
                         uploadMessage?.onReceiveValue(null)
@@ -462,6 +495,7 @@ class WebActivity : BaseActivity() {
                 activity!!.finish()
             } else if (method == "getUserInfo") {
                 val obj: JSONObject = Device.getInfo(activity)
+                obj.put("app_version", Util.version)
                 obj.put("token", Util.TOKEN)
                 obj.put("refresh_token", Util.RETOKEN)
                 obj.put("app_user_grade", Util.USER_GRADE)
@@ -470,7 +504,7 @@ class WebActivity : BaseActivity() {
                 obj.put("center_seq", Util.USER_CENTER_SEQ)
                 obj.put("profile_img_url", Util.USER_IMG)
 
-                obj.put("user_sno", Util.USER_SEQ)
+                obj.put("user_seq", Util.USER_SEQ)
                 obj.put("user_name", Util.USER_NAME)
                 obj.put("last_access_date", Util.USER_LASTDATE)
 
@@ -524,6 +558,20 @@ class WebActivity : BaseActivity() {
 
             } else if (method == "reLoadPage") { //
                 webView!!.reload()
+
+            }else if (method == "isReload") { //
+                val `is`: String = JSONParser.getString(data, "value")
+                if (`is` == "Y") {
+                    isLoad = true
+                    refreshLayout?.isEnabled = true
+                    refreshLayout?.isActivated = true
+
+                } else if (`is` == "N") {
+                    isLoad = false
+                    refreshLayout?.isEnabled = false
+                    refreshLayout?.isActivated = false
+                }
+
             } else if (method == "isBackKey") { //
                 val `is`: String = JSONParser.getString(data, "value")
                 if (`is` == "Y") {
@@ -532,7 +580,8 @@ class WebActivity : BaseActivity() {
                     isBack = false
                 }
             }else if (method == "isLayer") { //
-                isLayer = true
+                val value : Boolean = JSONParser.getBoolean(data, "isLayer")
+                isLayer = value
 
             } else if (method == "openBrowser") { //
                 val openURL: String = JSONParser.getString(data, "url")
@@ -681,9 +730,17 @@ class WebActivity : BaseActivity() {
 
     fun downloadURL(url: String?, fileName: String) {
         var fileName = fileName
-        fileName = fileName.replace("attachment; filename=", "")
+        fileName = fileName.replace("attachment;filename=", "")
         fileName = fileName.replace(";", "")
+        fileName = fileName.replace("\"", "")
         //attachment; filename*=UTF-8''뒤에 파일명이있는데 파일명만 추출하기위해 앞에 attachment; filename*=UTF-8''제거
+        fileName = URLDecoder.decode(fileName, "UTF-8")
+
+        if(fileName.equals("")){
+            val strs = url?.split("/")
+            fileName = URLDecoder.decode(strs!!.last(), "UTF-8")
+        }
+
         val file = File(
             Environment.getExternalStorageDirectory()
                 .toString() + "/" + Environment.DIRECTORY_DOWNLOADS, fileName
