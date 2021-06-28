@@ -58,7 +58,7 @@ class WebActivity : BaseActivity() {
         initUI()
         initWebView()
 
-//        url = "http://kkksssyyy.iptime.org:8080"
+//        url = "http://kkksssyyy.iptime.org:9090"
 
         loadURL(url)
     }
