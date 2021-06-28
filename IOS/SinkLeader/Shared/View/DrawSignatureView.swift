@@ -24,6 +24,7 @@ open class DrawSignatureView: UIView {
   
   // Call Back
   public var currentTouchState: ((TouchState) -> ())?
+  public var isSignDrawing = false
   
   // MARK: - Private Method's
   private var isDrawing = false
@@ -91,6 +92,7 @@ open class DrawSignatureView: UIView {
   override open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     guard self.isDrawing == false else { return }
     guard self.isMatchColor == false else { return }
+    isSignDrawing = true
     self.isDrawing = true
     guard let touch = touches.first else { return }
     let currentPoint = touch.location(in: self)

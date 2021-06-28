@@ -53,6 +53,11 @@ extension SignatureVC : Actions {
     
     
     @IBAction func ActionCompleteSign(_ sender: Any) {
+        if !vSign.isSignDrawing {
+            MessagePopup.show(self, "서명해 주세요.")
+            return
+        }
+        
         let image = vSign?.captureSignatureFromView()
         let data = image?.pngData()!
         
