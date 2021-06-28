@@ -20,7 +20,7 @@ class IntroVC: BaseVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Net.changeServer(2)
+        Net.changeServer(1)
         
         WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), completionHandler: {
             (records) -> Void in

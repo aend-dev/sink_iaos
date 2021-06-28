@@ -13,6 +13,8 @@ class CustomWebview : WKWebView{
     var cntBackList = 0
     var history : WebViewHistory
     
+    public var refreshCallback: (() -> ())?
+    
     override var canGoBack: Bool {
         get {
             let result = history.backList.count > 0
@@ -28,9 +30,10 @@ class CustomWebview : WKWebView{
         setReload(value: "Y")
     }
     
-    @objc func handleRefreshControl() {
+    @objc func handleRefreshControl() { // 수정해야됨
         DispatchQueue.main.async {
-            self.reload()
+//            self.reload()
+            self.refreshCallback?()
             self.scrollView.refreshControl?.endRefreshing()
         }
      }

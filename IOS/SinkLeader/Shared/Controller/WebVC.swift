@@ -39,6 +39,8 @@ class WebVC: BaseVC, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler,
                 
         initUI()
         
+//        mUrl = "http://kkksssyyy.iptime.org:8080"
+        
         if mParam.count == 0 {
             
             loadURL(url: mUrl)
@@ -82,11 +84,20 @@ class WebVC: BaseVC, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler,
             }
         }
         
+        wkWeb.refreshCallback = refreshWebview
+        
         vwWeb.addSubview(wkWeb)
     }
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return nil
+    }
+    
+    func refreshWebview(){
+        let json : [String : Any] = [:]
+        let todata : [String : Any] = ["callbackMethod" : "callbackIsReload",
+                                       "data" : json]
+        self.callJavaScript(data: todata)
     }
     
     func loadURL(url:String){
@@ -206,6 +217,40 @@ class WebVC: BaseVC, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler,
         
         let policy = webViewPolicy(webView as! CustomWebview, decidePolicyFor: navigationAction)
         decisionHandler(policy)
+    }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        let mimeType = navigationResponse.response.mimeType!
+        
+        if mimeType.elementsEqual("application/x-msdownload") {
+            if let url = navigationResponse.response.url {
+                let fileName = getFileNameFromResponse(navigationResponse.response)
+                
+                self.download(fileName: fileName, url: url)
+                
+                decisionHandler(.cancel)
+                return
+            }
+        }
+        decisionHandler(.allow)
+    }
+    
+    private func getFileNameFromResponse(_ response:URLResponse) -> String {
+        if let httpResponse = response as? HTTPURLResponse {
+            let headers = httpResponse.allHeaderFields
+            if let disposition = headers["Content-Disposition"] as? String {
+                let innerComponents = disposition.components(separatedBy: "=")
+                
+                if innerComponents.count > 1 {
+                    var title = innerComponents[1].replacingOccurrences(of: "\"", with: "")
+                    title = title.replacingOccurrences(of: ";", with: "")
+                    
+                    return title
+                }
+                
+            }
+        }
+        return "default"
     }
         
     func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
@@ -382,47 +427,6 @@ extension WebVC {
             CommonUtil.loadUrl(url)
         }
     }
-    
-    func requestRefesh(callback : String){
-        let url = ServerList[Net.Index] + "/v1/main/common/token"
-        
-        let param = ["x_token": m_appDelegate.token] as [String:Any]
-
-        Net.doRequest(method: .get, api: url, params: param, success: {
-            result in
-            print("requestRefesh Suc : \(result)")
-            
-            let code = result!["result"].numberValue
-            if code == 0 {
-                let message = result!["message"].stringValue
-                let data = result!["data"]
-                let user = data["user"]
-                
-                self.m_appDelegate.token = user["token"].stringValue
-                self.m_appDelegate.RETOKEN = user["refresh_token"].stringValue
-                self.m_appDelegate.USER_SEQ = user["user_seq"].stringValue
-                self.m_appDelegate.USER_NAME = user["name"].stringValue
-                self.m_appDelegate.USER_IMG = user["profile_img_url"].stringValue
-                self.m_appDelegate.USER_LASTDATE = user["last_access_date"].stringValue
-                
-                let json : [String : Any] = ["token" : self.m_appDelegate.token,
-                                             "refresh_token" : self.m_appDelegate.RETOKEN,
-                                             "user_seq" : self.m_appDelegate.USER_SEQ,
-                                             "name" : self.m_appDelegate.USER_NAME,
-                                             "profile_img_url" : self.m_appDelegate.USER_IMG,
-                                             "last_access_date":self.m_appDelegate.USER_LASTDATE]
-                let todata : [String : Any] = ["callbackMethod" : callback,
-                                               "data" : json]
-
-                self.callJavaScript(data: todata)
-            }else{
-                let msg = result!["message"].stringValue
-                MessagePopup.show(self, msg)
-            }
-        }, failure: {(code, msg) in
-            print("requestRefesh Err : \(code) \(msg)")
-        })
-    }
 }
 
 extension WebVC : Actions{
@@ -446,8 +450,8 @@ extension WebVC : Actions{
             loadURL(url: page_url)
             
         }else if method.elementsEqual("isReload"){
-//            var value = data["value"] as! String
-//            wkWeb.setReload(value: value)
+            var value = data["value"] as! String
+            wkWeb.setReload(value: value)
         
         }else if method.elementsEqual("closeWebView"){
 //            let page_url = data["url"] as! String?
@@ -478,6 +482,7 @@ extension WebVC : Actions{
             
             deviceInfo.updateValue(m_appDelegate.token, forKey: "token")
             deviceInfo.updateValue(m_appDelegate.RETOKEN, forKey: "refresh_token")
+            deviceInfo.updateValue(CommonUtil.bundleVer(), forKey: "app_version")
             
             deviceInfo.updateValue(m_appDelegate.USER_NAME, forKey: "user_name")
             deviceInfo.updateValue(m_appDelegate.USER_SEQ, forKey: "user_seq")
@@ -493,9 +498,6 @@ extension WebVC : Actions{
         }else if method.elementsEqual("setToken"){
             m_appDelegate.token = data["token"] as! String
             m_appDelegate.RETOKEN = data["refresh_token"] as! String
-            
-        }else if method.elementsEqual("getToken"){
-            requestRefesh(callback: callback)
 
         }else if method.elementsEqual("openBrowser"){
             let page_url = data["url"] as! String
@@ -547,7 +549,9 @@ extension WebVC : Actions{
             vc.cbFunction = callbackSign
             self.present(vc, animated: true)
         }else if method.elementsEqual("openNaverMap"){
-            let address = data["address"] as! String
+            var address = data["address"] as! String
+            address = String(address.split(separator: ",")[0])
+            
             let schemeURL = URL(string: "nmap://search?query=\(address)")!
             
             if UIApplication.shared.canOpenURL(schemeURL){

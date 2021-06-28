@@ -13,17 +13,17 @@ import SwiftyJSON
 let Agent = "SinkLeader-Mobile"
 
 let ServerList = [
-    "https://api.allbabo.com",
-    "http://allba-api.dev.aend.co.kr",
-    "http://192.168.29.248:30000",
-    "http://192.168.29.185:8120"
+    "http://api.sinkleader.com",
+    "http://sink-api.dev.aend.co.kr",
+    "http://office.aend.co.kr:20002",
+    "http://192.168.29.194:20002"
 ]
 
 let FrontList = [
-    "https://front.allbabo.com",
-    "http://allba-front.dev.aend.co.kr",
+    "http://front.sinkleader.com",
+    "http://sink-front.dev.aend.co.kr:20002",
     "http://office.aend.co.kr:20022",
-    "http://192.168.29.248:10001",
+    "http://192.168.29.194:20022",
 ]
 
 class Net {
